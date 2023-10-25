@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\buildMultiTargeting\FA23_Convocation2023_API.props" />
+</Project>
