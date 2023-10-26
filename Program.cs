@@ -10,7 +10,7 @@ namespace FA23_Convocation2023_API
             {
                 options.AddDefaultPolicy(policy =>
                 {
-                    policy.WithOrigins("*");
+                    policy.WithOrigins("*").AllowAnyHeader().AllowAnyMethod();
                 });
             });
 
