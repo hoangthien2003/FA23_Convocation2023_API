@@ -1,6 +1,13 @@
 ﻿using FA23_Convocation2023_API.Entities;
+using FA23_Convocation2023_API.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace FA23_Convocation2023_API.Controllers
 {
@@ -9,16 +16,54 @@ namespace FA23_Convocation2023_API.Controllers
     public class AuthController : ControllerBase
     {
         private readonly Convocation2023Context _context = new Convocation2023Context();
-
-        [HttpGet("Test")]
-        public IActionResult Test()
+        private readonly IConfiguration _configuration;
+        
+        public AuthController(IConfiguration configuration)
         {
-            var result = _context.Bachelors.FirstOrDefault();
-            if (result == null)
+            _configuration = configuration;
+        }
+
+        [HttpPost("Login")]
+        public async Task<IActionResult> LoginAsync(LoginRequest request)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+            if (user == null)
             {
-                return Ok("Has error in get data process!");
+                return BadRequest("auth/incorrect-email");
             }
-            return Ok(result);
+            if (request.Password != user.Password)
+            {
+                return BadRequest("auth/incorrect-password");
+            }
+            string token = CreateToken(user);
+            return Ok(token);
+        }
+
+        [HttpGet("TestAuthorize")]
+        [Authorize(Roles = "AD")]
+        public IActionResult TestAuthorize()
+        {
+            return Ok("Bạn là admin!");
+        }
+
+        private string CreateToken(User user)
+        {
+            List<Claim> claims = new List<Claim>
+            {
+                new Claim("email", user.Email),
+                new Claim("fullname", user.FullName),
+                new Claim("role", user.RoleId),
+            };
+            var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(
+                _configuration.GetSection("Jwt:Key").Value));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+            var token = new JwtSecurityToken(
+                claims: claims,
+                expires: DateTime.UtcNow.AddMinutes(30),
+                signingCredentials: creds
+                );
+            var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+            return jwt;
         }
     }
 }
