@@ -8,7 +8,6 @@ public partial class Convocation2023Context : DbContext
 {
     public Convocation2023Context()
     {
-        
     }
 
     public Convocation2023Context(DbContextOptions<Convocation2023Context> options)
@@ -20,10 +19,13 @@ public partial class Convocation2023Context : DbContext
 
     public virtual DbSet<CheckIn> CheckIns { get; set; }
 
+    public virtual DbSet<Role> Roles { get; set; }
+
+    public virtual DbSet<User> Users { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-            optionsBuilder.UseSqlServer("Server=localhost,1433;Initial Catalog=Convocation2023;Integrated Security=True;Trusted_Connection=true;Encrypt=false");
-    }
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Server=localhost,1433;Initial Catalog=Convocation2023;Integrated Security=True;Trusted_Connection=true;Encrypt=false");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -73,6 +75,40 @@ public partial class Convocation2023Context : DbContext
             entity.HasOne(d => d.Bachelor).WithMany(p => p.CheckIns)
                 .HasForeignKey(d => d.BachelorId)
                 .HasConstraintName("FK__CheckIn__Bachelo__3B75D760");
+        });
+
+        modelBuilder.Entity<Role>(entity =>
+        {
+            entity.Property(e => e.RoleId)
+                .HasMaxLength(2)
+                .IsUnicode(false)
+                .HasColumnName("RoleID");
+            entity.Property(e => e.RoleName)
+                .HasMaxLength(10)
+                .IsUnicode(false);
+        });
+
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.Property(e => e.UserId)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .HasColumnName("UserID");
+            entity.Property(e => e.Email)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.FullName).HasMaxLength(100);
+            entity.Property(e => e.Password)
+                .HasMaxLength(20)
+                .IsUnicode(false);
+            entity.Property(e => e.RoleId)
+                .HasMaxLength(2)
+                .IsUnicode(false)
+                .HasColumnName("RoleID");
+
+            entity.HasOne(d => d.Role).WithMany(p => p.Users)
+                .HasForeignKey(d => d.RoleId)
+                .HasConstraintName("FK_Users_Roles");
         });
 
         OnModelCreatingPartial(modelBuilder);
