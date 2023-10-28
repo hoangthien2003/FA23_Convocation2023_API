@@ -8,7 +8,7 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ["FA23_Convocation2023_API.csproj", "."]
-RUN dotnet restore "./FA23_Convocation2023_API.csproj"
+RUN dotnet restore "FA23_Convocation2023_API.csproj"
 COPY . .
 WORKDIR "/src/."
 RUN dotnet build "FA23_Convocation2023_API.csproj" -c Release -o /app/build

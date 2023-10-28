@@ -37,7 +37,12 @@ namespace FA23_Convocation2023_API.Controllers
                 return BadRequest("auth/incorrect-password");
             }
             string token = CreateToken(user);
-            return Ok(token);
+            return Ok(new
+            {
+                accessToken = token,
+                status = StatusCodes.Status200OK,
+                data = "Login successfully!"
+            });
         }
 
         [HttpGet("TestAuthorize")]
