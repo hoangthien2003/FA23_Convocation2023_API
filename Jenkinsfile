@@ -28,9 +28,9 @@ pipeline {
             steps {
                 echo 'Deploying and cleaning'
                 sh 'docker image pull chalsfptu/convocation2023:latest'
-                sh 'docker container stop fubloglogin || echo "this container does not exist" '
+                sh 'docker container stop convocation2023 || echo "this container does not exist" '
                 sh 'echo y | docker container prune '
-                sh 'docker container run -d --rm --name fubloglogin -p 82:80 -p 444:443  chalsfptu/convocation2023 '
+                sh 'docker container run -d --rm --name convocation2023 -p 82:80 -p 444:443  chalsfptu/convocation2023 '
             }
         }
         
