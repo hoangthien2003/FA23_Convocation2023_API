@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="..\build\FA23_Convocation2023_API.props" />
-</Project>
