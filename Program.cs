@@ -7,6 +7,7 @@ using Swashbuckle.AspNetCore.Filters;
 using System.Text;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Configuration;
+using FA23_Convocation2023_API.Hubs;
 
 namespace FA23_Convocation2023_API
 {
@@ -14,6 +15,7 @@ namespace FA23_Convocation2023_API
     {
         public static void Main(string[] args)
         {
+
             var builder = WebApplication.CreateBuilder(args);
             // Add services to the container.
             builder.Services.AddControllers();
@@ -21,6 +23,9 @@ namespace FA23_Convocation2023_API
             {
                 options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
             });
+            //add signalR
+            builder.Services.AddSignalR();
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             // Add DbContext
@@ -83,15 +88,20 @@ namespace FA23_Convocation2023_API
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+            
 
             // Add Cors 1 dòng :))))
             app.UseCors();
+
+            app.UseRouting();
 
             app.UseHttpsRedirection();
 
             app.UseAuthentication();
 
             app.UseAuthorization();
+
+            app.MapHub<MessageHub>("chat-hub");
 
             app.MapControllers();
 
