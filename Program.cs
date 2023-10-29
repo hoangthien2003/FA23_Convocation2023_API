@@ -92,7 +92,7 @@ namespace FA23_Convocation2023_API
             app.UseSwaggerUI();
 
             // Add Cors 1 dòng :))))
-            app.UseCors();
+            app.UseCors("CORSPolicy");
 
             app.UseRouting();
 
