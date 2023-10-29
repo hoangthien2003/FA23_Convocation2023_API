@@ -4,6 +4,7 @@
     {
         public string Image { get; set; }
         public string FullName { get; set; }
+        public string Major {  get; set; }
         public string StudentCode { get; set; }
         public string Mail { get; set; }
         public string HallName {  get; set; }

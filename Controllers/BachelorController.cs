@@ -25,7 +25,6 @@ namespace FA23_Convocation2023_API.Controllers
                 b.StudentCode,
                 b.FullName,
                 b.Mail,
-                b.Faculty,
                 b.Major,
                 b.Image,
                 b.Status,
@@ -72,6 +71,7 @@ namespace FA23_Convocation2023_API.Controllers
                     Image = bItem.Image,
                     FullName = bItem.FullName,
                     StudentCode = bItem.StudentCode,
+                    Major = bItem.Major,
                     Mail = bItem.Mail,
                     HallName = bItem.HallName,
                     SessionNum = bItem.SessionNum,
@@ -102,6 +102,7 @@ namespace FA23_Convocation2023_API.Controllers
             existingBachelor.FullName = bachelorRequest.FullName;
             existingBachelor.StudentCode = bachelorRequest.StudentCode;
             existingBachelor.Mail = bachelorRequest.Mail;
+            existingBachelor.Major = bachelorRequest.Major;
             existingBachelor.HallName = bachelorRequest.HallName;
             existingBachelor.SessionNum = bachelorRequest.SessionNum;
 
