@@ -83,9 +83,12 @@ namespace FA23_Convocation2023_API
 
             // Khúc này trở xuống đơn giản là project có gì lấy ra xài thoi
             // Configure the HTTP request pipeline.
-            app.UseSwagger();
-            app.UseSwaggerUI();
-
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI();
+            }
+            
 
             // Add Cors 1 dòng :))))
             app.UseCors();
