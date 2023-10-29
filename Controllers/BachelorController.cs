@@ -21,6 +21,7 @@ namespace FA23_Convocation2023_API.Controllers
         {
             var result = await _context.Bachelors.Select(b => new
             {
+                b.Id,
                 b.StudentCode,
                 b.FullName,
                 b.Mail,
@@ -32,10 +33,20 @@ namespace FA23_Convocation2023_API.Controllers
                 b.HallName,
                 b.SessionNum
             }).ToListAsync();
-            return Ok(result);
+            if (result.Count == 0) return Ok(new
+            {
+                status = StatusCodes.Status204NoContent,
+                message = "Not any bachelors!"
+            });
+            return Ok(new
+            {
+                status = StatusCodes.Status200OK,
+                message = "Get all bachelors successfully!",
+                data = result
+            });
         }
 
-        [HttpPost("AddBachelor")]
+        [HttpPost("Add")]
         public async Task<IActionResult> AddBechelorAsync([FromBody] List<BachelorDTO> bachelorRequest)
         {
             bool isExist = false;
@@ -70,7 +81,7 @@ namespace FA23_Convocation2023_API.Controllers
             });
         }
 
-        [HttpPut("UpdateBachelor")]
+        [HttpPut("Update")]
         public async Task<IActionResult> UpdateBachelorAsync(List<BachelorDTO> bachelorRequest)
         {
             foreach (var entity in _context.Bachelors)
@@ -99,7 +110,7 @@ namespace FA23_Convocation2023_API.Controllers
             });
         }
 
-        [HttpDelete("DeleteBachelor/{StudentCode}")]
+        [HttpDelete("Delete/{StudentCode}")]
         public async Task<IActionResult> DeleteBachelorAsync([FromRoute] string StudentCode)
         {
             var existBachelor = _context.Bachelors.FirstOrDefault(b => b.StudentCode == StudentCode);
@@ -112,8 +123,22 @@ namespace FA23_Convocation2023_API.Controllers
             return Ok(new
             {
                 status = StatusCodes.Status200OK,
-                message = "Delete bachelors successfully!",
-                data = existBachelor
+                message = "Delete successfully!",
+            });
+        }
+
+        [HttpDelete("DeleteAll")]
+        public async Task<IActionResult> DeleteAllBachelorAsync()
+        {
+            foreach(var bachelor in _context.Bachelors)
+            {
+                _context.Bachelors.Remove(bachelor);
+            }
+            await _context.SaveChangesAsync();
+            return Ok(new
+            {
+                status = StatusCodes.Status200OK,
+                message = "Delete all bachelor successfully!"
             });
         }
     }
