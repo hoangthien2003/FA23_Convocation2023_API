@@ -477,7 +477,6 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
-Jenkinsfile
 /.vs/FA23_Convocation2023_API/FileContentIndex/7d8db653-fb9b-4635-a9ff-380a1e66bf02.vsidx
 /.vs/FA23_Convocation2023_API/config/applicationhost.config
 /.vs/VSWorkspaceState.json
