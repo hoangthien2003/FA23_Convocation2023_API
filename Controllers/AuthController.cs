@@ -27,10 +27,10 @@ namespace FA23_Convocation2023_API.Controllers
         [HttpPost("Login")]
         public async Task<IActionResult> LoginAsync(LoginRequest request)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == request.UserId);
             if (user == null)
             {
-                return BadRequest("auth/incorrect-email");
+                return BadRequest("auth/incorrect-userID");
             }
             if (request.Password != user.Password)
             {
@@ -56,6 +56,7 @@ namespace FA23_Convocation2023_API.Controllers
         {
             List<Claim> claims = new List<Claim>
             {
+                new Claim("userID", user.UserId),
                 new Claim("email", user.Email),
                 new Claim("fullname", user.FullName),
                 new Claim("role", user.RoleId),
@@ -65,7 +66,7 @@ namespace FA23_Convocation2023_API.Controllers
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
             var token = new JwtSecurityToken(
                 claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(30),
+                expires: DateTime.UtcNow.AddMinutes(1440),
                 signingCredentials: creds
                 );
             var jwt = new JwtSecurityTokenHandler().WriteToken(token);
