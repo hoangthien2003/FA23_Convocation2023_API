@@ -4,5 +4,6 @@
     {
         public string StudentCode {  get; set; }
         public string CheckIn {  get; set; }
+        public bool Status {  get; set; }  
     }
 }
