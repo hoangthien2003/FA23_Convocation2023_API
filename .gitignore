@@ -9,6 +9,8 @@
 *.user
 *.userosscache
 *.sln.docstates
+.vs/
+
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
@@ -476,3 +478,18 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 Jenkinsfile
+/.vs/FA23_Convocation2023_API/FileContentIndex/7d8db653-fb9b-4635-a9ff-380a1e66bf02.vsidx
+/.vs/FA23_Convocation2023_API/config/applicationhost.config
+/.vs/VSWorkspaceState.json
+/.vs/slnx.sqlite
+/.vs/FA23_Convocation2023_API/config/applicationhost.config
+/.vs/FA23_Convocation2023_API/v17/.wsuo
+/.vs/FA23_Convocation2023_API/config/applicationhost.config
+/.vs/FA23_Convocation2023_API/DesignTimeBuild/.dtbcache.v2
+/.vs/FA23_Convocation2023_API/v17/.futdcache.v2
+/.vs/FA23_Convocation2023_API/v17/.suo
+/.vs/FA23_Convocation2023_API/v17/.wsuo
+/.vs/ProjectEvaluation/fa23_convocation2023_api.metadata.v7.bin
+/.vs/ProjectEvaluation/fa23_convocation2023_api.projects.v7.bin
+/.vs/slnx.sqlite
+/.vs/VSWorkspaceState.json
