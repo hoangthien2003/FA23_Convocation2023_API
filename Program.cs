@@ -8,6 +8,10 @@ using System.Text;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Configuration;
 using FA23_Convocation2023_API.Hubs;
+using Microsoft.AspNetCore.Localization;
+using System.Globalization;
+using Microsoft.AspNetCore.Mvc.Razor;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FA23_Convocation2023_API
 {
@@ -17,6 +21,7 @@ namespace FA23_Convocation2023_API
         {
 
             var builder = WebApplication.CreateBuilder(args);
+            
             // Add services to the container.
             builder.Services.AddControllers();
             builder.Services.AddControllers().AddJsonOptions(options =>
@@ -85,7 +90,6 @@ namespace FA23_Convocation2023_API
             // Configure the HTTP request pipeline.
             app.UseSwagger();
             app.UseSwaggerUI();
-
 
             // Add Cors 1 dòng :))))
             app.UseCors();

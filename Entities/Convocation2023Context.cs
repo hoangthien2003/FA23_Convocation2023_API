@@ -33,39 +33,47 @@ public partial class Convocation2023Context : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.UseCollation("Vietnamese_CI_AS");
+
         modelBuilder.Entity<Bachelor>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Bachelor__3214EC07BBA70F7D");
 
             entity.ToTable("Bachelor");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.Faculty)
                 .HasMaxLength(50)
-                .IsUnicode(false);
+                .IsUnicode(false)
+                .UseCollation("SQL_Latin1_General_CP1_CI_AS");
             entity.Property(e => e.FullName)
                 .HasMaxLength(100)
-                .IsUnicode(false);
+                .UseCollation("SQL_Latin1_General_CP1_CI_AS");
             entity.Property(e => e.HallName)
                 .HasMaxLength(1)
                 .IsUnicode(false)
-                .IsFixedLength();
+                .IsFixedLength()
+                .UseCollation("SQL_Latin1_General_CP1_CI_AS");
             entity.Property(e => e.Image)
                 .HasMaxLength(250)
-                .IsUnicode(false);
+                .IsUnicode(false)
+                .UseCollation("SQL_Latin1_General_CP1_CI_AS");
             entity.Property(e => e.Mail)
                 .HasMaxLength(100)
-                .IsUnicode(false);
+                .IsUnicode(false)
+                .UseCollation("SQL_Latin1_General_CP1_CI_AS");
             entity.Property(e => e.Major)
                 .HasMaxLength(50)
-                .IsUnicode(false);
+                .IsUnicode(false)
+                .UseCollation("SQL_Latin1_General_CP1_CI_AS");
             entity.Property(e => e.Status).HasDefaultValueSql("((0))");
             entity.Property(e => e.StatusBaChelor)
                 .HasMaxLength(50)
-                .IsUnicode(false);
+                .IsUnicode(false)
+                .UseCollation("SQL_Latin1_General_CP1_CI_AS");
             entity.Property(e => e.StudentCode)
                 .HasMaxLength(20)
-                .IsUnicode(false);
+                .IsUnicode(false)
+                .UseCollation("SQL_Latin1_General_CP1_CI_AS");
             entity.Property(e => e.TimeCheckIn1).HasColumnType("datetime");
             entity.Property(e => e.TimeCheckIn2).HasColumnType("datetime");
         });
@@ -92,7 +100,8 @@ public partial class Convocation2023Context : DbContext
             entity.Property(e => e.HallId).ValueGeneratedNever();
             entity.Property(e => e.HallName)
                 .HasMaxLength(100)
-                .IsUnicode(false);
+                .IsUnicode(false)
+                .UseCollation("SQL_Latin1_General_CP1_CI_AS");
         });
 
         modelBuilder.Entity<Role>(entity =>
@@ -100,10 +109,12 @@ public partial class Convocation2023Context : DbContext
             entity.Property(e => e.RoleId)
                 .HasMaxLength(2)
                 .IsUnicode(false)
+                .UseCollation("SQL_Latin1_General_CP1_CI_AS")
                 .HasColumnName("RoleID");
             entity.Property(e => e.RoleName)
                 .HasMaxLength(10)
-                .IsUnicode(false);
+                .IsUnicode(false)
+                .UseCollation("SQL_Latin1_General_CP1_CI_AS");
         });
 
         modelBuilder.Entity<Session>(entity =>
@@ -121,17 +132,23 @@ public partial class Convocation2023Context : DbContext
             entity.Property(e => e.UserId)
                 .HasMaxLength(10)
                 .IsUnicode(false)
+                .UseCollation("SQL_Latin1_General_CP1_CI_AS")
                 .HasColumnName("UserID");
             entity.Property(e => e.Email)
                 .HasMaxLength(100)
-                .IsUnicode(false);
-            entity.Property(e => e.FullName).HasMaxLength(100);
+                .IsUnicode(false)
+                .UseCollation("SQL_Latin1_General_CP1_CI_AS");
+            entity.Property(e => e.FullName)
+                .HasMaxLength(100)
+                .UseCollation("SQL_Latin1_General_CP1_CI_AS");
             entity.Property(e => e.Password)
                 .HasMaxLength(20)
-                .IsUnicode(false);
+                .IsUnicode(false)
+                .UseCollation("SQL_Latin1_General_CP1_CI_AS");
             entity.Property(e => e.RoleId)
                 .HasMaxLength(2)
                 .IsUnicode(false)
+                .UseCollation("SQL_Latin1_General_CP1_CI_AS")
                 .HasColumnName("RoleID");
 
             entity.HasOne(d => d.Role).WithMany(p => p.Users)
