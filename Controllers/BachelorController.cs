@@ -75,6 +75,7 @@ namespace FA23_Convocation2023_API.Controllers
                     Mail = bItem.Mail,
                     HallName = bItem.HallName,
                     SessionNum = bItem.SessionNum,
+                    Status = false,
                     CheckIn1 = false,
                     CheckIn2 = false
                 };

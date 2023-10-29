@@ -28,6 +28,10 @@ namespace FA23_Convocation2023_API.Controllers
                 bachelor.TimeCheckIn2 = DateTime.Now;
                 bachelor.CheckIn2 = checkinRequest.Status;
             }
+            if (bachelor.CheckIn1 == true && bachelor.CheckIn2 == true)
+            {
+                bachelor.Status = true;
+            }
             _context.Bachelors.Update(bachelor);
             await _context.SaveChangesAsync();
             return Ok(new
