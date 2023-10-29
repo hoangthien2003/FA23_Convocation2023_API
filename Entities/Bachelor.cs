@@ -21,7 +21,11 @@ public partial class Bachelor
 
     public bool? Status { get; set; }
 
-    public string? StatusBachelor { get; set; }
+    public string? StatusBaChelor { get; set; }
+
+    public string? HallName { get; set; }
+
+    public int? SessionNum { get; set; }
 
     public virtual ICollection<CheckIn> CheckIns { get; set; } = new List<CheckIn>();
 }

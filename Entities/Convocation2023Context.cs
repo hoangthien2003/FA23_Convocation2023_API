@@ -19,7 +19,11 @@ public partial class Convocation2023Context : DbContext
 
     public virtual DbSet<CheckIn> CheckIns { get; set; }
 
+    public virtual DbSet<Hall> Halls { get; set; }
+
     public virtual DbSet<Role> Roles { get; set; }
+
+    public virtual DbSet<Session> Sessions { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
 
@@ -31,17 +35,20 @@ public partial class Convocation2023Context : DbContext
     {
         modelBuilder.Entity<Bachelor>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Bachelor__3214EC07249BBB6D");
+            entity.HasKey(e => e.Id).HasName("PK__Bachelor__3214EC07BBA70F7D");
 
             entity.ToTable("Bachelor");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.Faculty)
                 .HasMaxLength(50)
                 .IsUnicode(false);
             entity.Property(e => e.FullName)
                 .HasMaxLength(100)
                 .IsUnicode(false);
+            entity.Property(e => e.HallName)
+                .HasMaxLength(1)
+                .IsUnicode(false)
+                .IsFixedLength();
             entity.Property(e => e.Image)
                 .HasMaxLength(250)
                 .IsUnicode(false);
@@ -52,8 +59,8 @@ public partial class Convocation2023Context : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false);
             entity.Property(e => e.Status).HasDefaultValueSql("((0))");
-            entity.Property(e => e.StatusBachelor)
-                .HasMaxLength(10)
+            entity.Property(e => e.StatusBaChelor)
+                .HasMaxLength(50)
                 .IsUnicode(false);
             entity.Property(e => e.StudentCode)
                 .HasMaxLength(20)
@@ -62,7 +69,7 @@ public partial class Convocation2023Context : DbContext
 
         modelBuilder.Entity<CheckIn>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__CheckIn__3214EC077D9ACBD1");
+            entity.HasKey(e => e.Id).HasName("PK__CheckIn__3214EC071C14B201");
 
             entity.ToTable("CheckIn");
 
@@ -74,7 +81,19 @@ public partial class Convocation2023Context : DbContext
 
             entity.HasOne(d => d.Bachelor).WithMany(p => p.CheckIns)
                 .HasForeignKey(d => d.BachelorId)
-                .HasConstraintName("FK__CheckIn__Bachelo__3B75D760");
+                .HasConstraintName("FK__CheckIn__Bachelo__4222D4EF");
+        });
+
+        modelBuilder.Entity<Hall>(entity =>
+        {
+            entity.HasKey(e => e.HallId).HasName("PK__Hall__7E60E2149F83D79B");
+
+            entity.ToTable("Hall");
+
+            entity.Property(e => e.HallId).ValueGeneratedNever();
+            entity.Property(e => e.HallName)
+                .HasMaxLength(100)
+                .IsUnicode(false);
         });
 
         modelBuilder.Entity<Role>(entity =>
@@ -86,6 +105,16 @@ public partial class Convocation2023Context : DbContext
             entity.Property(e => e.RoleName)
                 .HasMaxLength(10)
                 .IsUnicode(false);
+        });
+
+        modelBuilder.Entity<Session>(entity =>
+        {
+            entity.HasKey(e => e.SessionId).HasName("PK__Session__C9F492901585092D");
+
+            entity.ToTable("Session");
+
+            entity.Property(e => e.SessionId).ValueGeneratedNever();
+            entity.Property(e => e.Session1).HasColumnName("Session");
         });
 
         modelBuilder.Entity<User>(entity =>
