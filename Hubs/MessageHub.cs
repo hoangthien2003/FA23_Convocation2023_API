@@ -10,7 +10,7 @@ namespace FA23_Convocation2023_API.Hubs;
             await Clients.All.SendAsync("ReceiveMessage", $"{Context.ConnectionId} has joined");
         }
 
-    public async Task SendMessage<T>(string methodName, T data)
+    public async Task SendMessage(string methodName, object data)
     {
         await Clients.All.SendAsync(methodName, data);
     }
