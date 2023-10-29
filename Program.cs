@@ -83,7 +83,7 @@ namespace FA23_Convocation2023_API
 
             // Khúc này trở xuống đơn giản là project có gì lấy ra xài thoi
             // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
+            if (app.Environment.IsProduction())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
