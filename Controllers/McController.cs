@@ -60,7 +60,7 @@ namespace FA23_Convocation2023_API.Controllers
                 User1 = user1,
                 User2 = user2
             };
-            await messageHub.Clients.All.SendAsync("SendMessage", "CurrentBachelor", user1);
+            await messageHub.Clients.All.SendAsync("SendMessage", "CurrentBachelor " + user1.ToString(), user1.ToString());
             return Ok(new
             {
                 status = StatusCodes.Status200OK,
@@ -93,7 +93,7 @@ namespace FA23_Convocation2023_API.Controllers
                         Bachelor3 = "",
 
                     };
-                    await messageHub.Clients.All.SendAsync("SendMessage", "CurrentBachelor", bachelor2);
+                    await messageHub.Clients.All.SendAsync("SendMessage", "CurrentBachelor " + bachelor2.ToString(), bachelor2.ToString());
                     return Ok(new
                     {
                         status = StatusCodes.Status200OK,
@@ -129,7 +129,7 @@ namespace FA23_Convocation2023_API.Controllers
                 Bachelor3 = bachelor3,
 
             };
-            await messageHub.Clients.All.SendAsync("SendMessage", "CurrentBachelor", bachelor2);
+            await messageHub.Clients.All.SendAsync("SendMessage", "CurrentBachelor " + bachelor2.ToString(), bachelor2.ToString());
             return Ok(new
             {
                 status = StatusCodes.Status200OK,
@@ -157,7 +157,7 @@ namespace FA23_Convocation2023_API.Controllers
                     Bachelor2 = bachelor2,
 
                 };
-                await messageHub.Clients.All.SendAsync("SendMessage", "CurrentBachelor", bachelor1);
+                await messageHub.Clients.All.SendAsync("SendMessage", "CurrentBachelor " + bachelor1.ToString(), bachelor1.ToString());
                 return Ok(new
                 {
                     status = StatusCodes.Status200OK,
@@ -193,7 +193,7 @@ namespace FA23_Convocation2023_API.Controllers
                 Bachelor2 = bachelor2,
 
             };
-            await messageHub.Clients.All.SendAsync("SendMessage", "CurrentBachelor", bachelor1);
+            await messageHub.Clients.All.SendAsync("SendMessage", "CurrentBachelor " + bachelor1.ToString(), bachelor1.ToString());
             return Ok(new
             {
                 status = StatusCodes.Status200OK,
@@ -237,7 +237,7 @@ namespace FA23_Convocation2023_API.Controllers
                         Bachelor2 = bachelorNext,
 
                     };
-                    await messageHub.Clients.All.SendAsync("SendMessage", "CurrentBachelor", bachelorCurrent);
+                    await messageHub.Clients.All.SendAsync("SendMessage", "CurrentBachelor " + bachelorCurrent.ToString(), bachelorCurrent.ToString());
                     return Ok(new
                     {
                         status = StatusCodes.Status200OK,
@@ -263,7 +263,7 @@ namespace FA23_Convocation2023_API.Controllers
                         Bachelor3 = "",
 
                     };
-                    await messageHub.Clients.All.SendAsync("SendMessage", "CurrentBachelor", bachelorCurrent);
+                    await messageHub.Clients.All.SendAsync("SendMessage", "CurrentBachelor " + bachelorCurrent.ToString(), bachelorCurrent.ToString());
                     return Ok(new
                     {
                         status = StatusCodes.Status200OK,
@@ -289,7 +289,7 @@ namespace FA23_Convocation2023_API.Controllers
                         Bachelor3 = bachelorNext,
 
                     };
-                    await messageHub.Clients.All.SendAsync("SendMessage", "CurrentBachelor", bachelorCurrent);
+                    await messageHub.Clients.All.SendAsync("SendMessage", "CurrentBachelor " + bachelorCurrent.ToString(), bachelorCurrent.ToString());
                     return Ok(new
                     {
                         status = StatusCodes.Status200OK,
