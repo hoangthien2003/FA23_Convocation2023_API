@@ -30,6 +30,8 @@ namespace FA23_Convocation2023_API.Controllers
                 b.Image,
                 b.Status,
                 b.StatusBaChelor,
+                b.CheckIn1,
+                b.CheckIn2,
                 b.HallName,
                 b.SessionNum
             }).ToListAsync();
@@ -49,64 +51,67 @@ namespace FA23_Convocation2023_API.Controllers
         [HttpPost("Add")]
         public async Task<IActionResult> AddBechelorAsync([FromBody] List<BachelorDTO> bachelorRequest)
         {
-            bool isExist = false;
-            foreach(var bItem in  bachelorRequest)
+            List<string> errorList = new List<string>();
+
+            var studentCodes = bachelorRequest.Select(b => b.StudentCode).ToList();
+            var existingStudents = await _context.Bachelors
+                .Where(b => studentCodes.Contains(b.StudentCode))
+                .Select(b => b.StudentCode)
+                .ToListAsync();
+
+            foreach (var bItem in bachelorRequest)
             {
-                var existingBachelor = await _context.Bachelors.
-                FirstOrDefaultAsync(b => b.StudentCode == bItem.StudentCode);
-                if (existingBachelor != null)
+                if (existingStudents.Contains(bItem.StudentCode))
                 {
-                    isExist = true;
-                    break;
+                    errorList.Add($"Bachelor {bItem.StudentCode} is existed!");
+                    continue;
                 }
+
                 var bachelor = new Bachelor
                 {
-                    Id = bItem.Id,
                     Image = bItem.Image,
                     FullName = bItem.FullName,
                     StudentCode = bItem.StudentCode,
                     Mail = bItem.Mail,
+                    HallName = bItem.HallName,
+                    SessionNum = bItem.SessionNum,
                     CheckIn1 = false,
                     CheckIn2 = false
                 };
+
                 await _context.Bachelors.AddAsync(bachelor);
             }
-            if (isExist) return BadRequest("Existed bachelor!");
+
             await _context.SaveChangesAsync();
+
             return Ok(new
             {
                 status = StatusCodes.Status200OK,
                 message = "Add bachelors successfully!",
+                errorMessages = errorList,
                 data = bachelorRequest
             });
         }
 
         [HttpPut("Update")]
-        public async Task<IActionResult> UpdateBachelorAsync(List<BachelorDTO> bachelorRequest)
+        public async Task<IActionResult> UpdateBachelorAsync(BachelorDTO bachelorRequest)
         {
-            foreach (var entity in _context.Bachelors)
-            {
-                _context.Bachelors.Remove(entity);
-            }
-            await _context.SaveChangesAsync();
-            foreach (var entity in bachelorRequest)
-            {
-                var bachelor = new Bachelor
-                {
-                    Id = entity.Id,
-                    Image = entity.Image,
-                    FullName = entity.FullName,
-                    StudentCode = entity.StudentCode,
-                    Mail = entity.Mail,
-                };
-                await _context.Bachelors.AddAsync(bachelor);
-            }
+            var existingBachelor = await _context.Bachelors.FirstOrDefaultAsync(b => b.StudentCode == bachelorRequest.StudentCode);
+
+            existingBachelor.Image = bachelorRequest.Image;
+            existingBachelor.FullName = bachelorRequest.FullName;
+            existingBachelor.StudentCode = bachelorRequest.StudentCode;
+            existingBachelor.Mail = bachelorRequest.Mail;
+            existingBachelor.HallName = bachelorRequest.HallName;
+            existingBachelor.SessionNum = bachelorRequest.SessionNum;
+
+            _context.Bachelors.Update(existingBachelor);
             await _context.SaveChangesAsync();
             return Ok(new
             {
                 status = StatusCodes.Status200OK,
                 message = "Update bachelors successfully!",
-                data = bachelorRequest
+                data = existingBachelor
             });
         }
 
