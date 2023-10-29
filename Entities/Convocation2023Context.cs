@@ -39,6 +39,7 @@ public partial class Convocation2023Context : DbContext
 
             entity.ToTable("Bachelor");
 
+            entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.Faculty)
                 .HasMaxLength(50)
                 .IsUnicode(false);
@@ -65,6 +66,8 @@ public partial class Convocation2023Context : DbContext
             entity.Property(e => e.StudentCode)
                 .HasMaxLength(20)
                 .IsUnicode(false);
+            entity.Property(e => e.TimeCheckIn1).HasColumnType("datetime");
+            entity.Property(e => e.TimeCheckIn2).HasColumnType("datetime");
         });
 
         modelBuilder.Entity<CheckIn>(entity =>
@@ -78,10 +81,6 @@ public partial class Convocation2023Context : DbContext
             entity.Property(e => e.CheckIn2).HasDefaultValueSql("((0))");
             entity.Property(e => e.TimeCheckIn1).HasColumnType("datetime");
             entity.Property(e => e.TimeCheckIn2).HasColumnType("datetime");
-
-            entity.HasOne(d => d.Bachelor).WithMany(p => p.CheckIns)
-                .HasForeignKey(d => d.BachelorId)
-                .HasConstraintName("FK__CheckIn__Bachelo__4222D4EF");
         });
 
         modelBuilder.Entity<Hall>(entity =>
