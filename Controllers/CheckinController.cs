@@ -49,5 +49,33 @@ namespace FA23_Convocation2023_API.Controllers
                 data = result
             });
         }
+
+        [HttpPut("UncheckAll")]
+        public async Task<IActionResult> UncheckAllCheckinAsync()
+        {
+            foreach(var bachelor in _context.Bachelors)
+            {
+                bachelor.TimeCheckIn1 = null;
+                bachelor.TimeCheckIn2 = null;
+                bachelor.CheckIn1 = false;
+                bachelor.CheckIn2 = false;
+                _context.Bachelors.Update(bachelor);
+            }
+            await _context.SaveChangesAsync();
+            var bachelorResponse = await _context.Bachelors.Select(bItem => new
+            {
+                bItem.StudentCode,
+                bItem.TimeCheckIn1,
+                bItem.TimeCheckIn2,
+                bItem.CheckIn1,
+                bItem.CheckIn2
+            }).ToListAsync();
+            return Ok(new
+            {
+                status = StatusCodes.Status200OK,
+                message = "Uncheck all checkin successfully!",
+
+            });
+        }
     }
 }
