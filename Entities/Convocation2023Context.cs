@@ -39,7 +39,6 @@ public partial class Convocation2023Context : DbContext
 
             entity.ToTable("Bachelor");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.Faculty)
                 .HasMaxLength(50)
                 .IsUnicode(false);
