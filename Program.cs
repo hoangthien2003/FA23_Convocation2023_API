@@ -40,7 +40,7 @@ namespace FA23_Convocation2023_API
             {
                 options.AddDefaultPolicy(policy =>
                 {
-                    policy.WithOrigins("*").AllowAnyHeader().AllowAnyMethod();
+                    policy.WithOrigins("*").AllowAnyHeader().AllowAnyMethod().AllowCredentials();
                 });
             });
             // Chỗ này chỉ để config lúc login xong mình sẽ
