@@ -27,5 +27,11 @@ public partial class Bachelor
 
     public int? SessionNum { get; set; }
 
-    public virtual ICollection<CheckIn> CheckIns { get; set; } = new List<CheckIn>();
+    public DateTime? TimeCheckIn1 { get; set; }
+
+    public DateTime? TimeCheckIn2 { get; set; }
+
+    public bool? CheckIn1 { get; set; }
+
+    public bool? CheckIn2 { get; set; }
 }

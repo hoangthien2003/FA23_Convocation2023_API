@@ -16,6 +16,4 @@ public partial class CheckIn
     public bool? CheckIn1 { get; set; }
 
     public bool? CheckIn2 { get; set; }
-
-    public virtual Bachelor? Bachelor { get; set; }
 }

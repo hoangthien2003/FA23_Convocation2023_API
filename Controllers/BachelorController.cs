@@ -55,6 +55,8 @@ namespace FA23_Convocation2023_API.Controllers
                     FullName = bItem.FullName,
                     StudentCode = bItem.StudentCode,
                     Mail = bItem.Mail,
+                    CheckIn1 = false,
+                    CheckIn2 = false
                 };
                 await _context.Bachelors.AddAsync(bachelor);
             }
