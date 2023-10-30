@@ -55,6 +55,7 @@ namespace FA23_Convocation2023_API.Controllers
             }
             user1.StatusBaChelor = "Current";
             user2.StatusBaChelor = "Next";
+            await _context.SaveChangesAsync();
             var result = new
             {
                 User1 = user1,
