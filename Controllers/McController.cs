@@ -294,7 +294,7 @@ namespace FA23_Convocation2023_API.Controllers
                     return Ok(new
                     {
                         status = StatusCodes.Status200OK,
-                        message = "Last bachelor",
+                        message = "First bachelor",
                         data = result0
                     });
                 }
