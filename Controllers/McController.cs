@@ -72,17 +72,32 @@ namespace FA23_Convocation2023_API.Controllers
         }
 
         [HttpGet("GetBachelorNext")]
-        public async Task<IActionResult> GetBaChelorNext([FromQuery] int idCurrent, [FromQuery] int idNext, [FromQuery] string hall, [FromQuery] int session)
+        public async Task<IActionResult> GetBaChelorNext([FromQuery] string hall, [FromQuery] int session)
         {
             var bachelorLast = await _context.Bachelors.Where(b => b.Status == true && b.HallName.Equals(hall) && b.SessionNum == session).OrderBy(b => b.Id).LastOrDefaultAsync();
-            var bachelor1 = await _context.Bachelors.FirstOrDefaultAsync(b1 => b1.Id == idCurrent && b1.HallName.Equals(hall) && b1.SessionNum == session);
-            var bachelor2 = await _context.Bachelors.FirstOrDefaultAsync(b2 => b2.Id == idNext && b2.HallName.Equals(hall) && b2.SessionNum == session);
-
-            int numBachelor3 = idNext + 1;
+            var bachelor1 = await _context.Bachelors.FirstOrDefaultAsync(b1 => b1.StatusBaChelor == "Current" && b1.HallName.Equals(hall) && b1.SessionNum == session);
+            //var bachelor2 = await _context.Bachelors.FirstOrDefaultAsync(b2 => b2.Id == idNext && b2.HallName.Equals(hall) && b2.SessionNum == session);
+            if (bachelor1.Id == bachelorLast.Id)
+            {
+                return Ok(new
+                {
+                    status = StatusCodes.Status404NotFound,
+                    message = "IN THE LAST BACHELOR, CAN NOT NEXT",
+                    data = ""
+                });
+            }
+            Bachelor bachelor2 = null;
+            int numBachelor2 = bachelor1.Id + 1;
+            while(bachelor2 == null)
+            {
+                bachelor2 = await _context.Bachelors.FirstOrDefaultAsync(b2 => b2.Id == numBachelor2 && b2.HallName.Equals(hall) && b2.SessionNum == session);
+                numBachelor2++;
+            }
+            int numBachelor3 = bachelor2.Id + 1;
             Bachelor bachelor3 = null;
             if (bachelorLast != null)
             {
-                if (bachelorLast.Id == idNext)
+                if (bachelorLast.Id == bachelor2.Id)
                 {
                     bachelor1.StatusBaChelor = "Back";
                     bachelor2.StatusBaChelor = "Current";
@@ -98,7 +113,7 @@ namespace FA23_Convocation2023_API.Controllers
                     return Ok(new
                     {
                         status = StatusCodes.Status200OK,
-                        message = "Last bachelor",
+                        message = "CURRENT IS IN THE LAST OF INDEX",
                         data = result0
                     });
                 }
@@ -139,34 +154,53 @@ namespace FA23_Convocation2023_API.Controllers
             });
         }
         [HttpGet("GetBachelorBack")]
-        public async Task<IActionResult> GetBaChelorBack([FromQuery] int idBack, [FromQuery] int idCurrent, [FromQuery] string hall, [FromQuery] int session)
+        public async Task<IActionResult> GetBaChelorBack([FromQuery] string hall, [FromQuery] int session)
         {
             var bachelorFirst = await _context.Bachelors.FirstOrDefaultAsync(b1 => b1.Status == true && b1.HallName.Equals(hall) && b1.SessionNum == session);
 
-            var bachelor1 = await _context.Bachelors.FirstOrDefaultAsync(b1 => b1.Id == idBack && b1.HallName.Equals(hall) && b1.SessionNum == session);
-            var bachelor2 = await _context.Bachelors.FirstOrDefaultAsync(b2 => b2.Id == idCurrent && b2.HallName.Equals(hall) && b2.SessionNum == session);
+            //var bachelor1 = await _context.Bachelors.FirstOrDefaultAsync(b1 => b1.Id == idBack && b1.HallName.Equals(hall) && b1.SessionNum == session);
+            
+            var bachelor2 = await _context.Bachelors.FirstOrDefaultAsync(b2 => b2.StatusBaChelor == "Current" && b2.HallName.Equals(hall) && b2.SessionNum == session);
+            if(bachelor2.Id == bachelorFirst.Id)
+            {
+                return Ok(new
+                {
+                    status = StatusCodes.Status404NotFound,
+                    message = "IN THE FIRST BACHELOR, CAN NOT BACK",
+                    data = ""
+                });
+            }    
+            Bachelor bachelor1 = null;
+                int numBachelor1 = bachelor2.Id - 1;
+                while (bachelor1 == null && bachelorFirst.Id != bachelor2.Id)
+                {
+                    bachelor1 = await _context.Bachelors.FirstOrDefaultAsync(b2 => b2.Id == numBachelor1 && b2.HallName.Equals(hall) && b2.SessionNum == session);
+                    numBachelor1--;
+                }
+            
+            
             Bachelor bachelor0 = null;
-            if (bachelorFirst.Id == idBack)
+            if (bachelorFirst.Id == bachelor1.Id)
             {
                 bachelor1.StatusBaChelor = "Current";
                 bachelor2.StatusBaChelor = "Next";
                 await _context.SaveChangesAsync();
                 var result0 = new
                 {
-                    Bachelor0 = "",
-                    Bachelor1 = bachelor1,
-                    Bachelor2 = bachelor2,
+                    Bachelor1 = "",
+                    Bachelor2 = bachelor1,
+                    Bachelor3 = bachelor2,
 
                 };
                 await messageHub.Clients.All.SendAsync("SendMessage", "CurrentBachelor " + bachelor1.ToString(), bachelor1.ToString());
                 return Ok(new
                 {
                     status = StatusCodes.Status200OK,
-                    message = "First bachelor",
+                    message = "CURRENT IS IN THE FIRST OF INDEX",
                     data = result0
                 });
             }
-            int numBachelor0 = idBack - 1;
+            int numBachelor0 = bachelor1.Id - 1;
             while (bachelor0 == null)
             {
                 bachelor0 = await _context.Bachelors.FirstOrDefaultAsync(u => (u.Id == numBachelor0) && (u.Status == true) && u.HallName.Equals(hall) && u.SessionNum == session);
@@ -182,6 +216,7 @@ namespace FA23_Convocation2023_API.Controllers
                     data = ""
                 });
             }
+
             bachelor0.StatusBaChelor = "Back";
             bachelor1.StatusBaChelor = "Current";
             bachelor2.StatusBaChelor = "Next";
@@ -189,9 +224,9 @@ namespace FA23_Convocation2023_API.Controllers
 
             var result = new
             {
-                Bachelor0 = bachelor0,
-                Bachelor1 = bachelor1,
-                Bachelor2 = bachelor2,
+                Bachelor1 = bachelor0,
+                Bachelor2 = bachelor1,
+                Bachelor3 = bachelor2,
 
             };
             await messageHub.Clients.All.SendAsync("SendMessage", "CurrentBachelor " + bachelor1.ToString(), bachelor1.ToString());
@@ -201,6 +236,7 @@ namespace FA23_Convocation2023_API.Controllers
                 message = "Get 3 bachelors here!",
                 data = result
             });
+
         }
         [HttpGet("GetBachelorCurrent")]
         public async Task<IActionResult> GetBaChelorCurrrent([FromQuery] string hall, [FromQuery] int session)
@@ -233,9 +269,9 @@ namespace FA23_Convocation2023_API.Controllers
                     await _context.SaveChangesAsync();
                     var result = new
                     {
-                        Bachelor0 = bachelorBack,
-                        Bachelor1 = bachelorCurrent,
-                        Bachelor2 = bachelorNext,
+                        Bachelor1 = bachelorBack,
+                        Bachelor2 = bachelorCurrent,
+                        Bachelor3 = bachelorNext,
 
                     };
                     await messageHub.Clients.All.SendAsync("SendMessage", "CurrentBachelor " + bachelorCurrent.ToString(), bachelorCurrent.ToString());
