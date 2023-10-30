@@ -37,8 +37,9 @@ namespace FA23_Convocation2023_API
             builder.Services.AddDbContext<Convocation2023Context>();
             // Add CORS
             builder.Services.AddCors(options => {
-    options.AddPolicy("CORSPolicy", builder => builder.AllowAnyMethod().AllowAnyHeader().AllowCredentials().SetIsOriginAllowed((hosts) => true));
-});
+                options.AddPolicy("CORSPolicy", builder => 
+                builder.AllowAnyMethod().AllowAnyHeader().AllowCredentials().SetIsOriginAllowed((hosts) => true));
+            });
             // Chỗ này chỉ để config lúc login xong mình sẽ
             // lấy token, ở trên có nút Authorize, ấn vô
             // sẽ mở modal để mình bỏ token để phân quyền á, kiểu v
