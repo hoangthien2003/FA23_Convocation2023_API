@@ -304,7 +304,7 @@ namespace FA23_Convocation2023_API.Controllers
                     return Ok(new
                     {
                         status = StatusCodes.Status200OK,
-                        message = "Last bachelor",
+                        message = "CURRENT IS IN THE LAST OF INDEX",
                         data = result0
                     });
                 }
@@ -330,7 +330,7 @@ namespace FA23_Convocation2023_API.Controllers
                     return Ok(new
                     {
                         status = StatusCodes.Status200OK,
-                        message = "First bachelor",
+                        message = "CURRENT IS IN THE FIRST OF INDEX",
                         data = result0
                     });
                 }
