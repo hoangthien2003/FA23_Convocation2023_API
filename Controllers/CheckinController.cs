@@ -17,7 +17,17 @@ namespace FA23_Convocation2023_API.Controllers
         [HttpPut("UpdateCheckin")]
         public async Task<IActionResult> UpdateCheckinAsync(CheckinRequest checkinRequest)
         {
+
             var bachelor = await _context.Bachelors.FirstOrDefaultAsync(b => b.StudentCode == checkinRequest.StudentCode);
+            if(bachelor != null && bachelor.StatusBaChelor == "Current")
+            {
+                return BadRequest(new
+                {
+                    status = StatusCodes.Status400BadRequest,
+                    message = "Bachelor is being displayed in led, cannot be updated at this time",
+                    data = ""
+                });
+            }
             if (checkinRequest.CheckIn == "1")
             {
                 bachelor.TimeCheckIn1 = DateTime.Now;
