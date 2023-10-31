@@ -75,7 +75,7 @@ namespace FA23_Convocation2023_API.Controllers
         public async Task<IActionResult> GetBaChelorNext([FromQuery] string hall, [FromQuery] int session)
         {
             var bachelorLast = await _context.Bachelors.Where(b => b.Status == true && b.HallName.Equals(hall) && b.SessionNum == session).OrderBy(b => b.Id).LastOrDefaultAsync();
-            var bachelor1 = await _context.Bachelors.FirstOrDefaultAsync(b1 => b1.StatusBaChelor == "Current" && b1.HallName.Equals(hall) && b1.SessionNum == session);
+            var bachelor1 = await _context.Bachelors.FirstOrDefaultAsync(b1 => b1.StatusBaChelor == "Current" && b1.HallName.Equals(hall) && b1.SessionNum == session && b1.Status == true);
             //var bachelor2 = await _context.Bachelors.FirstOrDefaultAsync(b2 => b2.Id == idNext && b2.HallName.Equals(hall) && b2.SessionNum == session);
             if (bachelor1.Id == bachelorLast.Id)
             {
@@ -90,7 +90,7 @@ namespace FA23_Convocation2023_API.Controllers
             int numBachelor2 = bachelor1.Id + 1;
             while(bachelor2 == null)
             {
-                bachelor2 = await _context.Bachelors.FirstOrDefaultAsync(b2 => b2.Id == numBachelor2 && b2.HallName.Equals(hall) && b2.SessionNum == session);
+                bachelor2 = await _context.Bachelors.FirstOrDefaultAsync(b2 => b2.Id == numBachelor2 && b2.HallName.Equals(hall) && b2.SessionNum == session && b2.Status == true);
                 numBachelor2++;
             }
             int numBachelor3 = bachelor2.Id + 1;
@@ -160,7 +160,7 @@ namespace FA23_Convocation2023_API.Controllers
 
             //var bachelor1 = await _context.Bachelors.FirstOrDefaultAsync(b1 => b1.Id == idBack && b1.HallName.Equals(hall) && b1.SessionNum == session);
             
-            var bachelor2 = await _context.Bachelors.FirstOrDefaultAsync(b2 => b2.StatusBaChelor == "Current" && b2.HallName.Equals(hall) && b2.SessionNum == session);
+            var bachelor2 = await _context.Bachelors.FirstOrDefaultAsync(b2 => b2.StatusBaChelor == "Current" && b2.HallName.Equals(hall) && b2.SessionNum == session && b2.Status == true);
             if(bachelor2.Id == bachelorFirst.Id)
             {
                 return Ok(new
@@ -174,7 +174,7 @@ namespace FA23_Convocation2023_API.Controllers
                 int numBachelor1 = bachelor2.Id - 1;
                 while (bachelor1 == null && bachelorFirst.Id != bachelor2.Id)
                 {
-                    bachelor1 = await _context.Bachelors.FirstOrDefaultAsync(b2 => b2.Id == numBachelor1 && b2.HallName.Equals(hall) && b2.SessionNum == session);
+                    bachelor1 = await _context.Bachelors.FirstOrDefaultAsync(b2 => b2.Id == numBachelor1 && b2.HallName.Equals(hall) && b2.SessionNum == session && b2.Status == true);
                     numBachelor1--;
                 }
             
