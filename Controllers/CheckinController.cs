@@ -31,6 +31,9 @@ namespace FA23_Convocation2023_API.Controllers
             if (bachelor.CheckIn1 == true && bachelor.CheckIn2 == true)
             {
                 bachelor.Status = true;
+            } else
+            {
+                bachelor.Status = false;
             }
             _context.Bachelors.Update(bachelor);
             await _context.SaveChangesAsync();
