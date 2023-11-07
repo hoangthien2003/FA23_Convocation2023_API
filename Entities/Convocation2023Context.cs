@@ -76,6 +76,14 @@ public partial class Convocation2023Context : DbContext
                 .UseCollation("SQL_Latin1_General_CP1_CI_AS");
             entity.Property(e => e.TimeCheckIn1).HasColumnType("datetime");
             entity.Property(e => e.TimeCheckIn2).HasColumnType("datetime");
+            entity.Property(e => e.Chair)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .UseCollation("SQL_Latin1_General_CP1_CI_AS");
+            entity.Property(e => e.ChairParent)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .UseCollation("SQL_Latin1_General_CP1_CI_AS");
         });
 
         modelBuilder.Entity<CheckIn>(entity =>

@@ -34,6 +34,8 @@ public partial class Bachelor
     public bool? CheckIn1 { get; set; }
 
     public bool? CheckIn2 { get; set; }
+    public string? Chair { get; set; }
+    public string? ChairParent { get; set; }
 
     public override string? ToString()
     {
@@ -49,6 +51,8 @@ public partial class Bachelor
             $"TimeCheckin1 = {TimeCheckIn1}, " +
             $"TimeCheckin2 = {TimeCheckIn2}, " +
             $"Checkin1 = {CheckIn1}, " +
-            $"Checkin2 = {CheckIn2}";
+            $"Checkin2 = {CheckIn2}, " +
+            $"Chair  = {Chair}, " +
+            $"ChairParent  = {ChairParent}";
     }
 }

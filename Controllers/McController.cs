@@ -23,6 +23,35 @@ namespace FA23_Convocation2023_API.Controllers
             messageHub = _messageHub;
         }
         private readonly Convocation2023Context _context = new Convocation2023Context();
+        [HttpGet("GetLocationBachelor")]
+        public async Task<IActionResult> GetLocationBachelor([FromQuery] string studentCode)
+        {
+            var bachelor = await _context.Bachelors.FirstOrDefaultAsync(b => b.StudentCode == studentCode);
+            if (bachelor == null)
+            {
+                return NotFound(new
+                {
+                    status = StatusCodes.Status404NotFound,
+                    message = "Not Found",
+                    data = ""
+                });
+            }
+            if (bachelor != null && bachelor.Status == false)
+            {
+                return Ok(new
+                {
+                    status = StatusCodes.Status200OK,
+                    message = "Do not enough Checkin",
+                    data = ""
+                });
+            }
+            return Ok(new
+            {
+                status = StatusCodes.Status200OK,
+                message = "Location of bachelor",
+                data = bachelor.Chair
+            });
+        }
         [HttpGet("GetBachelor1st")]
         public async Task<IActionResult> Get1stBachelorToShow([FromQuery] string hall, [FromQuery] int session)
         {
