@@ -32,7 +32,9 @@ namespace FA23_Convocation2023_API.Controllers
                 b.CheckIn1,
                 b.CheckIn2,
                 b.HallName,
-                b.SessionNum
+                b.SessionNum,
+                b.Chair,
+                b.ChairParent
             }).ToListAsync();
             if (result.Count == 0) return Ok(new
             {
@@ -77,7 +79,9 @@ namespace FA23_Convocation2023_API.Controllers
                     SessionNum = bItem.SessionNum,
                     Status = false,
                     CheckIn1 = false,
-                    CheckIn2 = false
+                    CheckIn2 = false,
+                    Chair = bItem.Chair,
+                    ChairParent = bItem.ChairParent,
                 };
 
                 await _context.Bachelors.AddAsync(bachelor);
@@ -106,6 +110,8 @@ namespace FA23_Convocation2023_API.Controllers
             existingBachelor.Major = bachelorRequest.Major;
             existingBachelor.HallName = bachelorRequest.HallName;
             existingBachelor.SessionNum = bachelorRequest.SessionNum;
+            existingBachelor.Chair = bachelorRequest.Chair;
+            existingBachelor.ChairParent = bachelorRequest.ChairParent;
 
             _context.Bachelors.Update(existingBachelor);
             await _context.SaveChangesAsync();
