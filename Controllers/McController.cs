@@ -45,11 +45,12 @@ namespace FA23_Convocation2023_API.Controllers
                     data = ""
                 });
             }
+
             return Ok(new
             {
                 status = StatusCodes.Status200OK,
                 message = "Location of bachelor",
-                data = bachelor.Chair
+                data = bachelor
             });
         }
         [HttpGet("GetBachelor1st")]
