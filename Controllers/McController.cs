@@ -36,12 +36,31 @@ namespace FA23_Convocation2023_API.Controllers
                     data = ""
                 });
             }
+            if (bachelor != null && bachelor.CheckIn1 == false && bachelor.CheckIn2 ==true)
+            {
+                return Ok(new
+                {
+                    status = StatusCodes.Status200OK,
+                    message = "Bachelor does not Checkin1. Please checkin",
+                    data = ""
+                });
+            }
+            if (bachelor != null && bachelor.CheckIn2 == false && bachelor.CheckIn1 == true)
+            {
+                return Ok(new
+                {
+                    status = StatusCodes.Status200OK,
+                    message = "Bachelor does not Checkin2. Please checkin",
+                    data = ""
+                });
+            }
+
             if (bachelor != null && bachelor.Status == false)
             {
                 return Ok(new
                 {
                     status = StatusCodes.Status200OK,
-                    message = "Do not enough Checkin",
+                    message = "Bachelor does not Checkin. Please checkin",
                     data = ""
                 });
             }
