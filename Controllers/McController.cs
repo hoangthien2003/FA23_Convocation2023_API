@@ -13,7 +13,7 @@ using static System.Net.Mime.MediaTypeNames;
 namespace FA23_Convocation2023_API.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize(Roles = "MN, US, CK")]
+    [Authorize(Roles = "MN")]
     [ApiController]
     public class McController : ControllerBase
     {
@@ -100,6 +100,22 @@ namespace FA23_Convocation2023_API.Controllers
                     status = StatusCodes.Status404NotFound,
                     message = "Not Found",
                     data = ""
+                });
+            }
+            if (user1 != null || user2 == null)
+            {
+                user1.StatusBaChelor = "Current";
+                await _context.SaveChangesAsync();
+                var result1 = new
+                {
+                    User1 = user1
+                };
+                await messageHub.Clients.All.SendAsync("SendMessage", "CurrentBachelor " + user1.ToString(), user1.ToString());
+                return Ok(new
+                {
+                    status = StatusCodes.Status200OK,
+                    message = "Get all bachelors successfully!",
+                    data = result1
                 });
             }
             user1.StatusBaChelor = "Current";
@@ -293,7 +309,23 @@ namespace FA23_Convocation2023_API.Controllers
             var bachelorFirst = await _context.Bachelors.FirstOrDefaultAsync(b1 => b1.Status == true && b1.HallName.Equals(hall) && b1.SessionNum == session);
             var bachelorLast = await _context.Bachelors.Where(b => b.Status == true && b.HallName.Equals(hall) && b.SessionNum == session).OrderBy(b => b.Id).LastOrDefaultAsync();
             var bachelorCurrent = await _context.Bachelors.FirstOrDefaultAsync(b1 => b1.Status == true && b1.HallName.Equals(hall) && b1.SessionNum == session && b1.StatusBaChelor == "Current");
+            if(bachelorCurrent.Id == bachelorFirst.Id && bachelorCurrent.Id == bachelorLast.Id) 
+            {
+                bachelorCurrent.StatusBaChelor = "Current";
+                await _context.SaveChangesAsync();
+                var result1 = new
+                {
+                    Bachelor1 = bachelorCurrent,
+                };
+                await messageHub.Clients.All.SendAsync("SendMessage", "CurrentBachelor " + bachelorCurrent.ToString(), bachelorCurrent.ToString());
 
+                return Ok(new
+                {
+                    status = StatusCodes.Status200OK,
+                    message = "Only 1 bachelor have status true",
+                    data = result1
+                });
+            }
             if (bachelorCurrent != null)
             {
                 int numBachelorBack = bachelorCurrent.Id - 1;
