@@ -72,37 +72,141 @@ namespace FA23_Convocation2023_API.Controllers
                 data = bachelor
             });
         }
+        [HttpGet("GetAllLocationBachelor")]
+        public async Task<IActionResult> GetAllLocationBachelor()
+        {
+            var bachelor = await _context.Bachelors.ToListAsync();
+            if (bachelor == null)
+            {
+                return NotFound(new
+                {
+                    status = StatusCodes.Status404NotFound,
+                    message = "Not Found",
+                    data = ""
+                });
+            }
+            var results = new List<object>();
+            foreach (var bache in bachelor)
+            {
+                if (bache.CheckIn1 == false && bache.CheckIn2 == true)
+                {
+                    var result = new
+                    {
+                        id = bache.Id,
+                        studentCode = bache.StudentCode,
+                        fullname = bache.FullName,
+                        mail = bache.Mail,
+                        major = bache.Major,
+                        hallName = bache.HallName,
+                        sessionNum = bache.SessionNum,
+                        chair = bache.Chair,
+                        chairParent = bache.ChairParent,
+                        message = "Bachelor does not Checkin1. Please checkin"
+                    };
+                    results.Add(result);
+                }
+                else if (bache.CheckIn1 == true && bache.CheckIn2 == false)
+                {
+                    var result = new
+                    {
+                        id = bache.Id,
+                        studentCode = bache.StudentCode,
+                        fullname = bache.FullName,
+                        mail = bache.Mail,
+                        major = bache.Major,
+                        hallName = bache.HallName,
+                        sessionNum = bache.SessionNum,
+                        chair = bache.Chair,
+                        chairParent = bache.ChairParent,
+                        message = "Bachelor does not Checkin2. Please checkin"
+                    };
+                    results.Add(result);
+                }
+                else if (bache.Status == false)
+                {
+                    var result = new
+                    {
+                        id = bache.Id,
+                        studentCode = bache.StudentCode,
+                        fullname = bache.FullName,
+                        mail = bache.Mail,
+                        major = bache.Major,
+                        hallName = bache.HallName,
+                        sessionNum = bache.SessionNum,
+                        chair = bache.Chair,
+                        chairParent = bache.ChairParent,
+                        message = "Bachelor does not Checkin. Please checkin"
+                    };
+                    results.Add(result);
+                }
+                else
+                {
+                    var result = new
+                    {
+                        id = bache.Id,
+                        studentCode = bache.StudentCode,
+                        fullname = bache.FullName,
+                        mail = bache.Mail,
+                        major = bache.Major,
+                        hallName = bache.HallName,
+                        sessionNum = bache.SessionNum,
+                        chair = bache.Chair,
+                        chairParent = bache.ChairParent,
+                        message = "Ok"
+                    };
+                    results.Add(result);
+                }
+
+            }
+            
+            return Ok(new
+            {
+                status = StatusCodes.Status200OK,
+                message = "Location of bachelor",
+                data = results.ToList()
+            });
+        }
+
         [HttpGet("GetBachelor1st")]
         public async Task<IActionResult> Get1stBachelorToShow([FromQuery] string hall, [FromQuery] int session)
         {
             var user1 = await _context.Bachelors.FirstOrDefaultAsync(b1 => b1.Status == true && b1.HallName.Equals(hall) && b1.SessionNum == session);
-            if (user1 == null)
+            var listUser = await _context.Bachelors.Where(b1 => b1.Status == true && b1.HallName.Equals(hall) && b1.SessionNum == session).ToListAsync();     
+            if(listUser.Count > 1) 
             {
-                return NotFound(new
+                int userIdToSearch = (user1.Id) + 1;
+                Bachelor user2 = null;
+                while (user2 == null)
                 {
-                    status = StatusCodes.Status404NotFound,
-                    message = "Not Found",
-                    data = ""
+                    user2 = await _context.Bachelors.FirstOrDefaultAsync(u => (u.Id == userIdToSearch) && (u.Status == true) && u.HallName.Equals(hall) && u.SessionNum == session);
+                    userIdToSearch++;
+                }
+                user1.StatusBaChelor = "Current";
+                user2.StatusBaChelor = "Next";
+                await _context.SaveChangesAsync();
+                var result = new
+                {
+                    User1 = user1,
+                    User2 = user2
+                };
+                await messageHub.Clients.All.SendAsync("SendMessage", "CurrentBachelor " + user1.ToString(), user1.ToString());
+                return Ok(new
+                {
+                    status = StatusCodes.Status200OK,
+                    message = "Get all bachelors successfully!",
+                    data = result
                 });
             }
-            int userIdToSearch = (user1.Id) + 1;
-            Bachelor user2 = null;
-            while (user2 == null)
-            {
-                user2 = await _context.Bachelors.FirstOrDefaultAsync(u => (u.Id == userIdToSearch) && (u.Status == true) && u.HallName.Equals(hall) && u.SessionNum == session);
-                userIdToSearch++;
-            }
-
-            if (user1 == null || user2 == null)
-            {
-                return NotFound(new
-                {
-                    status = StatusCodes.Status404NotFound,
-                    message = "Not Found",
-                    data = ""
-                });
-            }
-            if (user1 != null || user2 == null)
+            //if (user1 == null || user2 == null)
+            //{
+            //    return NotFound(new
+            //    {
+            //        status = StatusCodes.Status404NotFound,
+            //        message = "Not Found",
+            //        data = ""
+            //    });
+            //}
+            if (listUser.Count == 1)
             {
                 user1.StatusBaChelor = "Current";
                 await _context.SaveChangesAsync();
@@ -114,26 +218,16 @@ namespace FA23_Convocation2023_API.Controllers
                 return Ok(new
                 {
                     status = StatusCodes.Status200OK,
-                    message = "Get all bachelors successfully!",
+                    message = "1 bachelor load successfully!",
                     data = result1
                 });
             }
-            user1.StatusBaChelor = "Current";
-            user2.StatusBaChelor = "Next";
-            await _context.SaveChangesAsync();
-            var result = new
+            return NotFound(new
             {
-                User1 = user1,
-                User2 = user2
-            };
-            await messageHub.Clients.All.SendAsync("SendMessage", "CurrentBachelor " + user1.ToString(), user1.ToString());
-            return Ok(new
-            {
-                status = StatusCodes.Status200OK,
-                message = "Get all bachelors successfully!",
-                data = result
+                status = StatusCodes.Status404NotFound,
+                message = "Not Found",
+                data = ""
             });
-
         }
 
         [HttpGet("GetBachelorNext")]
@@ -309,25 +403,35 @@ namespace FA23_Convocation2023_API.Controllers
             var bachelorFirst = await _context.Bachelors.FirstOrDefaultAsync(b1 => b1.Status == true && b1.HallName.Equals(hall) && b1.SessionNum == session);
             var bachelorLast = await _context.Bachelors.Where(b => b.Status == true && b.HallName.Equals(hall) && b.SessionNum == session).OrderBy(b => b.Id).LastOrDefaultAsync();
             var bachelorCurrent = await _context.Bachelors.FirstOrDefaultAsync(b1 => b1.Status == true && b1.HallName.Equals(hall) && b1.SessionNum == session && b1.StatusBaChelor == "Current");
-            if(bachelorCurrent.Id == bachelorFirst.Id && bachelorCurrent.Id == bachelorLast.Id) 
+            if (bachelorCurrent == null) 
             {
-                bachelorCurrent.StatusBaChelor = "Current";
-                await _context.SaveChangesAsync();
-                var result1 = new
+                return NotFound(new
                 {
-                    Bachelor1 = bachelorCurrent,
-                };
-                await messageHub.Clients.All.SendAsync("SendMessage", "CurrentBachelor " + bachelorCurrent.ToString(), bachelorCurrent.ToString());
-
-                return Ok(new
-                {
-                    status = StatusCodes.Status200OK,
-                    message = "Only 1 bachelor have status true",
-                    data = result1
+                    status = StatusCodes.Status404NotFound,
+                    message = "Do not have any bachelor check in done",
+                    data = ""
                 });
             }
+                    
             if (bachelorCurrent != null)
             {
+                if (bachelorCurrent.Id == bachelorFirst.Id && bachelorCurrent.Id == bachelorLast.Id)
+                {
+                    bachelorCurrent.StatusBaChelor = "Current";
+                    await _context.SaveChangesAsync();
+                    var result1 = new
+                    {
+                        Bachelor1 = bachelorCurrent,
+                    };
+                    await messageHub.Clients.All.SendAsync("SendMessage", "CurrentBachelor " + bachelorCurrent.ToString(), bachelorCurrent.ToString());
+
+                    return Ok(new
+                    {
+                        status = StatusCodes.Status200OK,
+                        message = "Only 1 bachelor have status true",
+                        data = result1
+                    });
+                }
                 int numBachelorBack = bachelorCurrent.Id - 1;
                 int numBachelorNext = bachelorCurrent.Id + 1;
                 if (bachelorCurrent.Id != bachelorLast.Id && bachelorCurrent.Id != bachelorFirst.Id)
