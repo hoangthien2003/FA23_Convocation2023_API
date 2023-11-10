@@ -48,7 +48,7 @@ namespace FA23_Convocation2023_API.Controllers
                 return BadRequest(new
                 {
                     status = StatusCodes.Status400BadRequest,
-                    message = "Status is false, cannot checkin"
+                    message = "Cannot checkin !"
                 });
             }
 
