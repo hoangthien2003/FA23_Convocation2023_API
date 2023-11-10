@@ -130,7 +130,7 @@ namespace FA23_Convocation2023_API.Controllers
         }
 
         [HttpGet("GetCountCheckin")]
-        [Authorize(Roles = "CK")]
+        [Authorize(Roles = "CK, MN")]
         public async Task<IActionResult> GetCountCheckinAsync()
         {
             List<CheckinSession> result = new();
