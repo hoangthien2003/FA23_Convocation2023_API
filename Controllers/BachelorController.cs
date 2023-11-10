@@ -152,5 +152,23 @@ namespace FA23_Convocation2023_API.Controllers
                 message = "Delete all bachelor successfully!"
             });
         }
+
+        [HttpPut("ResetStatus")]
+        public async Task<IActionResult> ResetStatusAsync()
+        {
+            foreach(var bachelor in _context.Bachelors)
+            {
+                bachelor.StatusBaChelor = null;
+                bachelor.Status = false;
+                bachelor.CheckIn = false;
+                _context.Bachelors.Update(bachelor);
+            }
+            await _context.SaveChangesAsync();
+            return Ok(new
+            {
+                status = StatusCodes.Status200OK,
+                message = "Reset all status checkin successfully!"
+            });
+        }
     }
 }

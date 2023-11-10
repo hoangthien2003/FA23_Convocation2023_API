@@ -128,5 +128,32 @@ namespace FA23_Convocation2023_API.Controllers
                 data = statusCheckin
             });
         }
+
+        [HttpGet("GetCountCheckin")]
+        [Authorize(Roles = "CK")]
+        public async Task<IActionResult> GetCountCheckinAsync()
+        {
+            List<CheckinSession> result = new();
+            foreach(var hallSession in _context.CheckIns)
+            {
+                var bachelorSession = await _context.Bachelors.Where(b => b.HallName == hallSession.HallName &&
+                b.SessionNum == hallSession.SessionNum).ToListAsync();
+                var bachelorCheckined = await _context.Bachelors.Where(b => b.HallName == hallSession.HallName &&
+                b.SessionNum == hallSession.SessionNum && b.CheckIn == true && b.Status == true).ToListAsync();
+                result.Add(new CheckinSession
+                {
+                    HallName = hallSession.HallName,
+                    SessionNum = (int)hallSession.SessionNum,
+                    BachelorsCheckined = bachelorCheckined.Count,
+                    BachelorsSession = bachelorSession.Count
+                });
+            }
+            return Ok(new
+            {
+                status = StatusCodes.Status200OK,
+                message = "Get count checkin successfully!",
+                data = result
+            });
+        }
     }
 }

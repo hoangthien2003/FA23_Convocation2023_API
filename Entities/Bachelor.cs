@@ -34,18 +34,4 @@ public partial class Bachelor
     public bool? CheckIn { get; set; }
 
     public DateTime? TimeCheckIn { get; set; }
-
-    public override string ToString()
-    {
-        return $"StudentCode: {StudentCode}, " +
-            $"FullName: {FullName}, " +
-            $"Mail: {Mail}, " +
-            $"Faculty: {Faculty}, " +
-            $"Major: {Major}, " +
-            $"Image: {Image}, " +
-            $"Status: {Status}, " +
-            $"StatusBachelor: {StatusBaChelor}, " +
-            $"HallName: {HallName}, " +
-            $"SessionNum: {SessionNum}, ";
-    }
 }
