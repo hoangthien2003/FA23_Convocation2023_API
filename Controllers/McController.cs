@@ -36,21 +36,12 @@ namespace FA23_Convocation2023_API.Controllers
                     data = ""
                 });
             }
-            if (bachelor != null && bachelor.CheckIn1 == false && bachelor.CheckIn2 ==true)
+            if (bachelor != null && bachelor.CheckIn == false)
             {
                 return Ok(new
                 {
                     status = StatusCodes.Status200OK,
-                    message = "Bachelor does not Checkin1. Please checkin",
-                    data = ""
-                });
-            }
-            if (bachelor != null && bachelor.CheckIn2 == false && bachelor.CheckIn1 == true)
-            {
-                return Ok(new
-                {
-                    status = StatusCodes.Status200OK,
-                    message = "Bachelor does not Checkin2. Please checkin",
+                    message = "Bachelor does not Checkin. Please checkin",
                     data = ""
                 });
             }
@@ -88,7 +79,7 @@ namespace FA23_Convocation2023_API.Controllers
             var results = new List<object>();
             foreach (var bache in bachelor)
             {
-                if (bache.CheckIn1 == false && bache.CheckIn2 == true)
+                if (bache.CheckIn == false)
                 {
                     var result = new
                     {
@@ -101,24 +92,7 @@ namespace FA23_Convocation2023_API.Controllers
                         sessionNum = bache.SessionNum,
                         chair = bache.Chair,
                         chairParent = bache.ChairParent,
-                        message = "Bachelor does not Checkin1. Please checkin"
-                    };
-                    results.Add(result);
-                }
-                else if (bache.CheckIn1 == true && bache.CheckIn2 == false)
-                {
-                    var result = new
-                    {
-                        id = bache.Id,
-                        studentCode = bache.StudentCode,
-                        fullname = bache.FullName,
-                        mail = bache.Mail,
-                        major = bache.Major,
-                        hallName = bache.HallName,
-                        sessionNum = bache.SessionNum,
-                        chair = bache.Chair,
-                        chairParent = bache.ChairParent,
-                        message = "Bachelor does not Checkin2. Please checkin"
+                        message = "Bachelor does not Checkin. Please checkin"
                     };
                     results.Add(result);
                 }

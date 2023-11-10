@@ -27,32 +27,11 @@ public partial class Bachelor
 
     public int? SessionNum { get; set; }
 
-    public DateTime? TimeCheckIn1 { get; set; }
-
-    public DateTime? TimeCheckIn2 { get; set; }
-
-    public bool? CheckIn1 { get; set; }
-
-    public bool? CheckIn2 { get; set; }
     public string? Chair { get; set; }
+
     public string? ChairParent { get; set; }
 
-    public override string? ToString()
-    {
-        return $"StudentCode = {StudentCode}, " +
-            $"FullName = {FullName}, " +
-            $"Mail = {Mail}, " +
-            $"Major = {Major}, " +
-            $"Image = {Image}, " +
-            $"Status = {Status}, " +
-            $"StatusBachelor = {StatusBaChelor}, " +
-            $"HallName = {HallName}, " +
-            $"SessionNum = {SessionNum}, " +
-            $"TimeCheckin1 = {TimeCheckIn1}, " +
-            $"TimeCheckin2 = {TimeCheckIn2}, " +
-            $"Checkin1 = {CheckIn1}, " +
-            $"Checkin2 = {CheckIn2}, " +
-            $"Chair  = {Chair}, " +
-            $"ChairParent  = {ChairParent}";
-    }
+    public bool? CheckIn { get; set; }
+
+    public DateTime? TimeCheckIn { get; set; }
 }

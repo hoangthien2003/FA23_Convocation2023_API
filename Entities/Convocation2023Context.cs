@@ -41,6 +41,12 @@ public partial class Convocation2023Context : DbContext
 
             entity.ToTable("Bachelor");
 
+            entity.Property(e => e.Chair)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.ChairParent)
+                .HasMaxLength(50)
+                .IsUnicode(false);
             entity.Property(e => e.Faculty)
                 .HasMaxLength(50)
                 .IsUnicode(false)
@@ -74,29 +80,18 @@ public partial class Convocation2023Context : DbContext
                 .HasMaxLength(20)
                 .IsUnicode(false)
                 .UseCollation("SQL_Latin1_General_CP1_CI_AS");
-            entity.Property(e => e.TimeCheckIn1).HasColumnType("datetime");
-            entity.Property(e => e.TimeCheckIn2).HasColumnType("datetime");
-            entity.Property(e => e.Chair)
-                .HasMaxLength(50)
-                .IsUnicode(false)
-                .UseCollation("SQL_Latin1_General_CP1_CI_AS");
-            entity.Property(e => e.ChairParent)
-                .HasMaxLength(50)
-                .IsUnicode(false)
-                .UseCollation("SQL_Latin1_General_CP1_CI_AS");
+            entity.Property(e => e.TimeCheckIn).HasColumnType("datetime");
         });
 
         modelBuilder.Entity<CheckIn>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__CheckIn__3214EC071C14B201");
-
             entity.ToTable("CheckIn");
 
-            entity.Property(e => e.BachelorId).HasColumnName("BachelorID");
-            entity.Property(e => e.CheckIn1).HasDefaultValueSql("((0))");
-            entity.Property(e => e.CheckIn2).HasDefaultValueSql("((0))");
-            entity.Property(e => e.TimeCheckIn1).HasColumnType("datetime");
-            entity.Property(e => e.TimeCheckIn2).HasColumnType("datetime");
+            entity.Property(e => e.CheckinId).HasColumnName("CheckinID");
+            entity.Property(e => e.HallName)
+                .HasMaxLength(1)
+                .IsUnicode(false)
+                .IsFixedLength();
         });
 
         modelBuilder.Entity<Hall>(entity =>

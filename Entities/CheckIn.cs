@@ -5,15 +5,11 @@ namespace FA23_Convocation2023_API.Entities;
 
 public partial class CheckIn
 {
-    public int Id { get; set; }
+    public string? HallName { get; set; }
 
-    public int? BachelorId { get; set; }
+    public int? SessionNum { get; set; }
 
-    public DateTime? TimeCheckIn1 { get; set; }
+    public bool? Status { get; set; }
 
-    public DateTime? TimeCheckIn2 { get; set; }
-
-    public bool? CheckIn1 { get; set; }
-
-    public bool? CheckIn2 { get; set; }
+    public int CheckinId { get; set; }
 }
