@@ -170,5 +170,40 @@ namespace FA23_Convocation2023_API.Controllers
                 message = "Reset all status checkin successfully!"
             });
         }
+
+        //get bachelor by hall name and session number
+        [HttpGet("GetByHallSession/{hallName}/{sessionNum}")]
+        public async Task<IActionResult> GetBachelorByHallSessionAsync([FromRoute] string hallName, [FromRoute] int sessionNum)
+        {
+            var result = await _context.Bachelors
+                .Where(b => b.HallName == hallName && b.SessionNum == sessionNum)
+                .Select(b => new
+                {
+                    b.Id,
+                    b.StudentCode,
+                    b.FullName,
+                    b.Mail,
+                    b.Major,
+                    b.Image,
+                    b.Status,
+                    b.StatusBaChelor,
+                    b.CheckIn,
+                    b.HallName,
+                    b.SessionNum,
+                    b.Chair,
+                    b.ChairParent
+                }).ToListAsync();
+            if (result.Count == 0) return Ok(new
+            {
+                status = StatusCodes.Status204NoContent,
+                message = "Not any bachelors!"
+            });
+            return Ok(new
+            {
+                status = StatusCodes.Status200OK,
+                message = "Get all bachelors successfully!",
+                data = result
+            });
+        }
     }
 }

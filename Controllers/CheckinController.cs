@@ -17,7 +17,13 @@ namespace FA23_Convocation2023_API.Controllers
         [Authorize(Roles = "MN, CK")]
         public async Task<IActionResult> UpdateCheckinAsync(CheckinRequest checkinRequest)
         {
-
+            var bachelorDuplicate = await _context.Bachelors.Select(b => b.StudentCode == checkinRequest.StudentCode).ToListAsync();
+            if (bachelorDuplicate.Count > 1)
+            {
+                var bachelorDuplicateLastCreate = await _context.Bachelors.FirstOrDefaultAsync(b => b.StudentCode == checkinRequest.StudentCode && b.HallName == null);
+                //delete bachelorDuplicateLastCreate
+                _context.Bachelors.Remove(bachelorDuplicateLastCreate);
+            }
             var bachelor = await _context.Bachelors.FirstOrDefaultAsync(b => b.StudentCode == checkinRequest.StudentCode);
             if (bachelor != null && bachelor.StatusBaChelor == "Current")
             {
@@ -119,6 +125,32 @@ namespace FA23_Convocation2023_API.Controllers
             var statusCheckin = await _context.CheckIns.FirstOrDefaultAsync(
                 c => c.HallName == request.HallName && c.SessionNum == request.SessionNum);
             statusCheckin.Status = request.Status;
+            //if status == fasle, get all bacchelor by hallName and sessionNum and find all bachelor have checkin = false and create new list bachelor by list bachelor just found which same infor but hallname and sessionnum == null
+            if (statusCheckin.Status == false)
+            {
+                var bachelors = await _context.Bachelors.Where(b => b.HallName == statusCheckin.HallName && b.SessionNum == statusCheckin.SessionNum && b.CheckIn == false).ToListAsync();
+                foreach (var bachelor in bachelors)
+                {
+                    var newBachelor = new Bachelor
+                    {
+                        StudentCode = bachelor.StudentCode,
+                        FullName = bachelor.FullName,
+                        Mail = bachelor.Mail,
+                        Faculty = bachelor.Faculty,
+                        Major = bachelor.Major,
+                        Image = bachelor.Image,
+                        Status = bachelor.Status,
+                        StatusBaChelor = bachelor.StatusBaChelor,
+                        HallName = null,
+                        SessionNum = null,
+                        Chair = bachelor.Chair,
+                        ChairParent = bachelor.ChairParent,
+                        CheckIn = false,
+                        TimeCheckIn = null
+                    };
+                    await _context.Bachelors.AddAsync(newBachelor);
+                }
+            }
             _context.CheckIns.Update(statusCheckin);
             await _context.SaveChangesAsync();
             return Ok(new
