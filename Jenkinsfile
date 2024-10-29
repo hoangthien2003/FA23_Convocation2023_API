@@ -1,43 +1,36 @@
 pipeline {
-
     agent any
 
-    
     stages {
-
         stage('Packaging') {
-
             steps {
-                
-                sh 'docker build --pull --rm -f Dockerfile -t convocation2023:latest .'
-                
+                    sh 'docker build --pull --rm -f Dockerfile -t convocationcheckin:latest .'
             }
         }
 
         stage('Push to DockerHub') {
-
             steps {
                 withDockerRegistry(credentialsId: 'dockerhub', url: 'https://index.docker.io/v1/') {
-                    sh 'docker tag convocation2023:latest chalsfptu/convocation2023:latest'
-                    sh 'docker push chalsfptu/convocation2023:latest'
+                    sh 'docker tag convocationcheckin:latest chalsfptu/convocationcheckin:latest'
+                    sh 'docker push chalsfptu/convocationcheckin:latest'
                 }
             }
         }
 
-        stage('Deploy Spring Boot to DEV') {
+        stage('Deploy') {
             steps {
-                echo 'Deploying and cleaning'
-                sh 'docker image pull chalsfptu/convocation2023:latest'
-                sh 'docker container stop convocation2023 || echo "this container does not exist" '
-                sh 'echo y | docker container prune '
-                sh 'docker container run -d --rm --name convocation2023 -p 82:80 -p 444:443  chalsfptu/convocation2023 '
-            }
+                
+                    echo 'Deploying and cleaning'
+                    sh 'docker container stop convocationcheckin || echo "this container does not exist"'
+                    sh 'echo y | docker system prune'
+                    sh '''
+                        docker container run -d --name convocationcheckin -p 85:80 chalsfptu/convocationcheckin
+                    '''
+                }
         }
-        
- 
     }
+
     post {
-        // Clean after build
         always {
             cleanWs()
         }
