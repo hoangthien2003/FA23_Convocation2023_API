@@ -12,7 +12,8 @@ namespace FA23_Convocation2023_API.Controllers
         private readonly Convocation2023Context _context = new Convocation2023Context();
 
         //Create a new session
-        public async Task<IActionResult> CreateSessionAsync(CreateSessionRequest sessionRequest)
+        [HttpPost("CreateSession")]
+        public async Task<IActionResult> CreateSessionAsync([FromBody]CreateSessionRequest sessionRequest)
         { 
             var checkInExist = _context.CheckIns.FirstOrDefault(c => c.HallName == sessionRequest.HallName && c.SessionNum == sessionRequest.SessionNum);
             if (checkInExist != null) {

@@ -120,6 +120,39 @@ namespace FA23_Convocation2023_API.Controllers
                 data = existingBachelor
             });
         }
+        //update list bachelor by hallname and sessionnum
+        [HttpPut("UpdateListBachelor/{hallName}/{sessionNum}")]
+        public async Task<IActionResult> UpdateListBachelorAsync([FromBody] List<ListBachelor> bachelorRequest,[FromRoute] string hallName, [FromRoute] string sessionNum)
+        {
+            List<string> errorList = new List<string>();
+            foreach (var bItem in bachelorRequest)
+            {
+                var existingBachelor = await _context.Bachelors.FirstOrDefaultAsync(b => b.StudentCode == bItem.StudentCode);
+                if (existingBachelor == null)
+                {
+                    errorList.Add($"Bachelor {bItem.StudentCode} is not existed!");
+                    continue;
+                }
+                existingBachelor.Image = bItem.Image;
+                existingBachelor.FullName = bItem.FullName;
+                existingBachelor.StudentCode = bItem.StudentCode;
+                existingBachelor.Mail = bItem.Mail;
+                existingBachelor.Major = bItem.Major;
+                existingBachelor.HallName = bItem.HallName;
+                existingBachelor.SessionNum = bItem.SessionNum;
+                existingBachelor.Chair = bItem.Chair;
+                existingBachelor.ChairParent = bItem.ChairParent;
+                _context.Bachelors.Update(existingBachelor);
+            }
+            await _context.SaveChangesAsync();
+            return Ok(new
+            {
+                status = StatusCodes.Status200OK,
+                message = "Update bachelors successfully!",
+                errorMessages = errorList,
+                data = bachelorRequest
+            });
+        }
 
         [HttpDelete("Delete/{StudentCode}")]
         public async Task<IActionResult> DeleteBachelorAsync([FromRoute] string StudentCode)
