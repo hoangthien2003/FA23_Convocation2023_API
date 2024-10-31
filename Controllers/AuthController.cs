@@ -54,12 +54,14 @@ namespace FA23_Convocation2023_API.Controllers
 
         private string CreateToken(User user)
         {
+            var role = _context.Roles.FirstOrDefault(r => r.RoleId == user.RoleId);
             List<Claim> claims = new List<Claim>
             {
                 new Claim("userID", user.UserId),
                 new Claim("email", user.Email),
                 new Claim("fullname", user.FullName),
-                new Claim("role", user.RoleId),
+                //new Claim("role", user.RoleId),
+                new Claim("role", role.RoleName),
             };
             var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(
                 _configuration.GetSection("Jwt:Key").Value));
