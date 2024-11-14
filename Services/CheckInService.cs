@@ -78,31 +78,31 @@ namespace FA23_Convocation2023_API.Services
                 c => c.HallId == hallId && c.SessionId == sessionId);
             statusCheckin.Status = status;
             //if status == fasle, get all bacchelor by hallName and sessionNum and find all bachelor have checkin = false and create new list bachelor by list bachelor just found which same infor but hallname and sessionnum == null
-            if (statusCheckin.Status == false)
-            {
-                var bachelors = await _context.Bachelors.Where(b => b.HallId == statusCheckin.HallId && b.SessionId == statusCheckin.SessionId && b.CheckIn == false).ToListAsync();
-                foreach (var bachelor in bachelors)
-                {
-                    var newBachelor = new Bachelor
-                    {
-                        StudentCode = bachelor.StudentCode,
-                        FullName = bachelor.FullName,
-                        Mail = bachelor.Mail,
-                        Faculty = bachelor.Faculty,
-                        Major = bachelor.Major,
-                        Image = bachelor.Image,
-                        Status = bachelor.Status,
-                        StatusBaChelor = bachelor.StatusBaChelor,
-                        HallId = null,
-                        SessionId = null,
-                        Chair = bachelor.Chair,
-                        ChairParent = bachelor.ChairParent,
-                        CheckIn = false,
-                        TimeCheckIn = null
-                    };
-                    await _context.Bachelors.AddAsync(newBachelor);
-                }
-            }
+            //if (statusCheckin.Status == false)
+            //{
+            //    var bachelors = await _context.Bachelors.Where(b => b.HallId == statusCheckin.HallId && b.SessionId == statusCheckin.SessionId && b.CheckIn == false).ToListAsync();
+            //    foreach (var bachelor in bachelors)
+            //    {
+            //        var newBachelor = new Bachelor
+            //        {
+            //            StudentCode = bachelor.StudentCode,
+            //            FullName = bachelor.FullName,
+            //            Mail = bachelor.Mail,
+            //            Faculty = bachelor.Faculty,
+            //            Major = bachelor.Major,
+            //            Image = bachelor.Image,
+            //            Status = bachelor.Status,
+            //            StatusBaChelor = bachelor.StatusBaChelor,
+            //            HallId = null,
+            //            SessionId = null,
+            //            Chair = bachelor.Chair,
+            //            ChairParent = bachelor.ChairParent,
+            //            CheckIn = false,
+            //            TimeCheckIn = null
+            //        };
+            //        await _context.Bachelors.AddAsync(newBachelor);
+            //    }
+            //}
             _context.CheckIns.Update(statusCheckin);
             await _context.SaveChangesAsync();
             return statusCheckin;
@@ -141,12 +141,45 @@ namespace FA23_Convocation2023_API.Services
             {
                 HallId = hallId,
                 SessionId = sessionId,
-                Status = false
+                Status = null
             };
             await _context.CheckIns.AddAsync(checkin);
             await _context.SaveChangesAsync();
             return checkin;
         }
-
+        //get all bachelor have table checkin is false and checkIn is false
+        public async Task<List<ListBachelor>> GetBachelorCheckInAsync()
+        {
+            var checkIn = await _context.CheckIns.Where(c => c.Status == false).ToListAsync();
+            var result = new List<ListBachelor>();
+            foreach (var c in checkIn)
+            {
+                var hall = await _context.Halls.FirstOrDefaultAsync(h => h.HallId == c.HallId);
+                var session = await _context.Sessions.FirstOrDefaultAsync(s => s.SessionId == c.SessionId);
+                var listBachelor = await _context.Bachelors.Where(b => b.HallId == c.HallId && b.SessionId == c.SessionId).ToListAsync();
+                foreach (var b in listBachelor)
+                {
+                    result.Add(new ListBachelor
+                    {
+                        Id = b.Id,
+                        StudentCode = b.StudentCode,
+                        FullName = b.FullName,
+                        Mail = b.Mail,
+                        Faculty = b.Faculty,
+                        Major = b.Major,
+                        Image = b.Image,
+                        Status = b.Status,
+                        StatusBaChelor = b.StatusBaChelor,
+                        HallName = hall.HallName,
+                        SessionNum = session.Session1,
+                        Chair = b.Chair,
+                        ChairParent = b.ChairParent,
+                        CheckIn = b.CheckIn,
+                        TimeCheckIn = b.TimeCheckIn
+                    });
+                }
+            }
+            return result;
+        }
     }
 }

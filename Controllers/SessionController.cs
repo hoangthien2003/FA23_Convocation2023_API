@@ -38,6 +38,23 @@ namespace FA23_Convocation2023_API.Controllers
                 data = result
             });
         }
+        //get list session
+        [HttpGet("GetAll")]
+        public async Task<IActionResult> GetAllSessionAsync()
+        {
+            var result = await _sessionService.GetAllSessionAsync();
+            if (result.Count == 0) return Ok(new
+            {
+                status = StatusCodes.Status204NoContent,
+                message = "Not any sessions!"
+            });
+            return Ok(new
+            {
+                status = StatusCodes.Status200OK,
+                message = "Get all sessions successfully!",
+                data = result
+            });
+        }
 
     }
 }

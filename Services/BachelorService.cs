@@ -9,10 +9,34 @@ namespace FA23_Convocation2023_API.Services
     {
         private readonly Convo24Context _context = new Convo24Context();
 
-        public async Task<List<Bachelor>> GetAllBachelorAsync()
+        public async Task<List<ListBachelor>> GetAllBachelorAsync()
         {
             var result = await _context.Bachelors.ToListAsync();
-            return result;
+            var listBachelor = new List<ListBachelor>();
+            foreach (var bachelor in result)
+            {
+                var hall = await _context.Halls.FirstOrDefaultAsync(h => h.HallId == bachelor.HallId);
+                var session = await _context.Sessions.FirstOrDefaultAsync(s => s.SessionId == bachelor.SessionId);
+                listBachelor.Add(new ListBachelor
+                {
+                    Id = bachelor.Id,
+                    StudentCode = bachelor.StudentCode,
+                    FullName = bachelor.FullName,
+                    Mail = bachelor.Mail,
+                    Faculty = bachelor.Faculty,
+                    Major = bachelor.Major,
+                    Image = bachelor.Image,
+                    Status = bachelor.Status,
+                    StatusBaChelor = bachelor.StatusBaChelor,
+                    HallName = hall.HallName,
+                    SessionNum = session.Session1,
+                    Chair = bachelor.Chair,
+                    ChairParent = bachelor.ChairParent,
+                    CheckIn = bachelor.CheckIn,
+                    TimeCheckIn = bachelor.TimeCheckIn
+                });
+            }
+            return listBachelor;
         }
 
         public async Task<object> AddBechelorAsync([FromBody] List<BachelorDTO> bachelorRequest)
@@ -172,5 +196,6 @@ namespace FA23_Convocation2023_API.Services
                 .ToListAsync();
             return result;
         }
+        
     }
 }

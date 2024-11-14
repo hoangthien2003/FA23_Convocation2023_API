@@ -25,10 +25,10 @@ namespace FA23_Convocation2023_API
             
             // Add services to the container.
             builder.Services.AddControllers();
-            builder.Services.AddControllers().AddJsonOptions(options =>
-            {
-                options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
-            });
+            //builder.Services.AddControllers().AddJsonOptions(options =>
+            //{
+            //    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+            //});
             //add signalR
             builder.Services.AddSignalR();
 

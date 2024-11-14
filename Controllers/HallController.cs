@@ -38,5 +38,23 @@ namespace FA23_Convocation2023_API.Controllers
                 data = result
             });
         }
+
+        //get list hall
+        [HttpGet("GetAll")]
+        public async Task<IActionResult> GetAllHallAsync()
+        {
+            var result = await _hallService.GetAllHallAsync();
+            if (result.Count == 0) return Ok(new
+            {
+                status = StatusCodes.Status204NoContent,
+                message = "Not any halls!"
+            });
+            return Ok(new
+            {
+                status = StatusCodes.Status200OK,
+                message = "Get all halls successfully!",
+                data = result
+            });
+        }
     }
 }

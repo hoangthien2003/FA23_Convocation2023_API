@@ -111,5 +111,18 @@ namespace FA23_Convocation2023_API.Controllers
                 message = "Create Checkin success!"
             });
         }
+
+        //get list bachelor dose not checkin
+        [HttpGet("GetListBachelorNotCheckin")]
+        public async Task<IActionResult> GetListBachelorNotCheckinAsync()
+        {
+            var result = await _checkInService.GetBachelorCheckInAsync();
+            return Ok(new
+            {
+                status = StatusCodes.Status200OK,
+                message = "Get list bachelor not checkin successfully!",
+                data = result
+            });
+        }
     }
 }

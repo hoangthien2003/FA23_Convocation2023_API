@@ -1,4 +1,5 @@
-﻿using FA23_Convocation2023_API.Models;
+﻿using FA23_Convocation2023_API.DTO;
+using FA23_Convocation2023_API.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace FA23_Convocation2023_API.Services
@@ -23,6 +24,21 @@ namespace FA23_Convocation2023_API.Services
             await _context.Halls.AddAsync(hall);
             await _context.SaveChangesAsync();
             return hall;
+        }
+
+        //get list hall
+        public async Task<List<ListHall>> GetAllHallAsync()
+        {
+            var halls = await _context.Halls.ToListAsync();
+            var listHall = new List<ListHall>();
+            foreach (var hall in halls) {
+                listHall.Add(new ListHall
+                {
+                    HallId = hall.HallId,
+                    HallName = hall.HallName
+                });
+            }
+            return listHall;
         }
     }
 

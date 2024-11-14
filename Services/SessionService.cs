@@ -25,5 +25,21 @@ namespace FA23_Convocation2023_API.Services
             await _context.SaveChangesAsync();
             return session;
         }
+
+        //get all session
+        public async Task<List<ListSession>> GetAllSessionAsync()
+        {
+            var sessions = await _context.Sessions.ToListAsync();
+            var listSession = new List<ListSession>();
+            foreach (var session in sessions)
+            {
+                listSession.Add(new ListSession
+                {
+                    SessionId = session.SessionId,
+                    Session1 = session.Session1
+                });
+            }
+            return listSession;
+        }
     }
 }
