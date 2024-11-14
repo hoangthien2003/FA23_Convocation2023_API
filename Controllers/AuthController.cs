@@ -27,7 +27,7 @@ namespace FA23_Convocation2023_API.Controllers
         [HttpPost("Login")]
         public async Task<IActionResult> LoginAsync(LoginRequest request)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == request.UserId);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.UserName);
             if (user == null)
             {
                 return BadRequest("auth/incorrect-userID");
