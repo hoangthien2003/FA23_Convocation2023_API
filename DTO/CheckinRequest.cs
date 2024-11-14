@@ -1,4 +1,4 @@
-﻿namespace FA23_Convocation2023_API.Models
+﻿namespace FA23_Convocation2023_API.DTO
 {
     public class CheckinRequest
     {

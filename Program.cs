@@ -1,5 +1,4 @@
-﻿using FA23_Convocation2023_API.Entities;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -12,6 +11,8 @@ using Microsoft.AspNetCore.Localization;
 using System.Globalization;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.AspNetCore.Mvc;
+using FA23_Convocation2023_API.Models;
+using FA23_Convocation2023_API.Services;
 
 namespace FA23_Convocation2023_API
 {
@@ -34,7 +35,7 @@ namespace FA23_Convocation2023_API
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             // Add DbContext
-            builder.Services.AddDbContext<Convocation2023Context>();
+            builder.Services.AddDbContext<Convo24Context>();
             // Add CORS
             builder.Services.AddCors(options => {
                 options.AddPolicy("CORSPolicy", builder => 
@@ -77,6 +78,10 @@ namespace FA23_Convocation2023_API
 
             // Add chức năng phân quyền nè, 1 dòng :)))
             builder.Services.AddAuthorization();
+            builder.Services.AddScoped<BachelorService>()
+                .AddScoped<CheckInService>()
+                .AddScoped<HallService>()
+                .AddScoped<SessionService>();
 
             // Nhớ là nếu cái gì liên quan tới config builder như builder.Services. gì á,
             // thì nhớ là phải bỏ trên dòng này nha, tại từ dòng này trở xuống là 

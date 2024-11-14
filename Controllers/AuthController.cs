@@ -1,5 +1,5 @@
 ﻿using Azure.Core;
-using FA23_Convocation2023_API.Entities;
+using FA23_Convocation2023_API.DTO;
 using FA23_Convocation2023_API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -16,7 +16,7 @@ namespace FA23_Convocation2023_API.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly Convocation2023Context _context = new Convocation2023Context();
+        private readonly Convo24Context _context = new Convo24Context();
         private readonly IConfiguration _configuration;
         
         public AuthController(IConfiguration configuration)
@@ -60,7 +60,6 @@ namespace FA23_Convocation2023_API.Controllers
                 new Claim("userID", user.UserId),
                 new Claim("email", user.Email),
                 new Claim("fullname", user.FullName),
-                //new Claim("role", user.RoleId),
                 new Claim("role", role.RoleName),
             };
             var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(

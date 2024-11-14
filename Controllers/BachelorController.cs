@@ -1,11 +1,12 @@
 ﻿using FA23_Convocation2023_API.Models;
-using FA23_Convocation2023_API.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 using System;
+using FA23_Convocation2023_API.DTO;
+using FA23_Convocation2023_API.Services;
 
 namespace FA23_Convocation2023_API.Controllers
 {
@@ -14,27 +15,22 @@ namespace FA23_Convocation2023_API.Controllers
     [ApiController]
     public class BachelorController : ControllerBase
     {
-        private readonly Convocation2023Context _context = new Convocation2023Context();
+        
+        private readonly BachelorService _bachService;
+        private readonly HallService _hallService;
+        private readonly SessionService _sessionService;
+
+        public BachelorController(BachelorService bachService, HallService hallService, SessionService sessionService)
+        {
+            _bachService = bachService;
+            _hallService = hallService;
+            _sessionService = sessionService;
+        }
 
         [HttpGet("GetAll")]
         public async Task<IActionResult> GetAllBachelorAsync()
         {
-            var result = await _context.Bachelors.Select(b => new
-            {
-                b.Id,
-                b.StudentCode,
-                b.FullName,
-                b.Mail,
-                b.Major,
-                b.Image,
-                b.Status,
-                b.StatusBaChelor,
-                b.CheckIn,
-                b.HallName,
-                b.SessionNum,
-                b.Chair,
-                b.ChairParent
-            }).ToListAsync();
+            var result = await _bachService.GetAllBachelorAsync();
             if (result.Count == 0) return Ok(new
             {
                 status = StatusCodes.Status204NoContent,
@@ -51,47 +47,12 @@ namespace FA23_Convocation2023_API.Controllers
         [HttpPost("Add")]
         public async Task<IActionResult> AddBechelorAsync([FromBody] List<BachelorDTO> bachelorRequest)
         {
-            List<string> errorList = new List<string>();
-
-            var studentCodes = bachelorRequest.Select(b => b.StudentCode).ToList();
-            var existingStudents = await _context.Bachelors
-                .Where(b => studentCodes.Contains(b.StudentCode))
-                .Select(b => b.StudentCode)
-                .ToListAsync();
-
-            foreach (var bItem in bachelorRequest)
-            {
-                if (existingStudents.Contains(bItem.StudentCode))
-                {
-                    errorList.Add($"Bachelor {bItem.StudentCode} is existed!");
-                    continue;
-                }
-
-                var bachelor = new Bachelor
-                {
-                    Image = bItem.Image,
-                    FullName = bItem.FullName,
-                    StudentCode = bItem.StudentCode,
-                    Major = bItem.Major,
-                    Mail = bItem.Mail,
-                    HallName = bItem.HallName,
-                    SessionNum = bItem.SessionNum,
-                    Status = false,
-                    CheckIn = false,
-                    Chair = bItem.Chair,
-                    ChairParent = bItem.ChairParent,
-                };
-
-                await _context.Bachelors.AddAsync(bachelor);
-            }
-
-            await _context.SaveChangesAsync();
-
+            var result = await _bachService.AddBechelorAsync(bachelorRequest);
             return Ok(new
             {
                 status = StatusCodes.Status200OK,
                 message = "Add bachelors successfully!",
-                errorMessages = errorList,
+                errorMessages = ((dynamic)result).ErrorMessages,
                 data = bachelorRequest
             });
         }
@@ -99,20 +60,17 @@ namespace FA23_Convocation2023_API.Controllers
         [HttpPut("Update")]
         public async Task<IActionResult> UpdateBachelorAsync(BachelorDTO bachelorRequest)
         {
-            var existingBachelor = await _context.Bachelors.FirstOrDefaultAsync(b => b.StudentCode == bachelorRequest.StudentCode);
-
-            existingBachelor.Image = bachelorRequest.Image;
-            existingBachelor.FullName = bachelorRequest.FullName;
-            existingBachelor.StudentCode = bachelorRequest.StudentCode;
-            existingBachelor.Mail = bachelorRequest.Mail;
-            existingBachelor.Major = bachelorRequest.Major;
-            existingBachelor.HallName = bachelorRequest.HallName;
-            existingBachelor.SessionNum = bachelorRequest.SessionNum;
-            existingBachelor.Chair = bachelorRequest.Chair;
-            existingBachelor.ChairParent = bachelorRequest.ChairParent;
-
-            _context.Bachelors.Update(existingBachelor);
-            await _context.SaveChangesAsync();
+            var hallExist = await _hallService.HallExist(bachelorRequest.HallName);
+            if (!hallExist)
+            {
+                return BadRequest("Hall is not existed!");
+            }
+            var sessionExist = await _sessionService.SessionExist(bachelorRequest.SessionNum);
+            if (!sessionExist)
+            {
+                return BadRequest("Session is not existed!");
+            }
+            var existingBachelor = await _bachService.UpdateBachelorAsync(bachelorRequest);
             return Ok(new
             {
                 status = StatusCodes.Status200OK,
@@ -121,64 +79,44 @@ namespace FA23_Convocation2023_API.Controllers
             });
         }
         //update list bachelor by hallname and sessionnum
-        [HttpPut("UpdateListBachelor/{hallName}/{sessionNum}")]
-        public async Task<IActionResult> UpdateListBachelorAsync([FromBody] List<ListBachelor> bachelorRequest,[FromRoute] string hallName, [FromRoute] string sessionNum)
+        [HttpPut("UpdateListBachelor/{hallId}/{sessionId}")]
+        public async Task<IActionResult> UpdateListBachelorAsync([FromBody] List<ListBachelor> bachelorRequest,[FromRoute] int hallId, [FromRoute] int sessionId)
         {
-            List<string> errorList = new List<string>();
-            foreach (var bItem in bachelorRequest)
-            {
-                var existingBachelor = await _context.Bachelors.FirstOrDefaultAsync(b => b.StudentCode == bItem.StudentCode);
-                if (existingBachelor == null)
-                {
-                    errorList.Add($"Bachelor {bItem.StudentCode} is not existed!");
-                    continue;
-                }
-                existingBachelor.Image = bItem.Image;
-                existingBachelor.FullName = bItem.FullName;
-                existingBachelor.StudentCode = bItem.StudentCode;
-                existingBachelor.Mail = bItem.Mail;
-                existingBachelor.Major = bItem.Major;
-                existingBachelor.HallName = bItem.HallName;
-                existingBachelor.SessionNum = bItem.SessionNum;
-                existingBachelor.Chair = bItem.Chair;
-                existingBachelor.ChairParent = bItem.ChairParent;
-                _context.Bachelors.Update(existingBachelor);
-            }
-            await _context.SaveChangesAsync();
+            var result = await _bachService.UpdateListBachelorAsync(bachelorRequest, hallId, sessionId);
             return Ok(new
             {
                 status = StatusCodes.Status200OK,
                 message = "Update bachelors successfully!",
-                errorMessages = errorList,
-                data = bachelorRequest
+                errorMessages = ((dynamic)result).ErrorMessages
             });
         }
 
         [HttpDelete("Delete/{StudentCode}")]
         public async Task<IActionResult> DeleteBachelorAsync([FromRoute] string StudentCode)
         {
-            var existBachelor = _context.Bachelors.FirstOrDefault(b => b.StudentCode == StudentCode);
-            if (existBachelor == null)
+            var result = await _bachService.DeleteBachelorAsync(StudentCode);
+            if (!result)
             {
-                return BadRequest("Not any bachelor!");
+                return BadRequest(new
+                {
+                    status = StatusCodes.Status400BadRequest,
+                    message = "Delete failed!"
+                });
             }
-            _context.Bachelors.Remove(existBachelor);
-            await _context.SaveChangesAsync();
-            return Ok(new
+            else
             {
-                status = StatusCodes.Status200OK,
-                message = "Delete successfully!",
-            });
+                return Ok(new
+                {
+                    status = StatusCodes.Status200OK,
+                    message = "Delete successfully!"
+                });
+            }
         }
 
         [HttpDelete("DeleteAll")]
         public async Task<IActionResult> DeleteAllBachelorAsync()
         {
-            foreach(var bachelor in _context.Bachelors)
-            {
-                _context.Bachelors.Remove(bachelor);
-            }
-            await _context.SaveChangesAsync();
+            var result = await _bachService.DeleteAllBachelorAsync();
             return Ok(new
             {
                 status = StatusCodes.Status200OK,
@@ -189,14 +127,7 @@ namespace FA23_Convocation2023_API.Controllers
         [HttpPut("ResetStatus")]
         public async Task<IActionResult> ResetStatusAsync()
         {
-            foreach(var bachelor in _context.Bachelors)
-            {
-                bachelor.StatusBaChelor = null;
-                bachelor.Status = false;
-                bachelor.CheckIn = false;
-                _context.Bachelors.Update(bachelor);
-            }
-            await _context.SaveChangesAsync();
+            await _bachService.ResetStatusAsync();
             return Ok(new
             {
                 status = StatusCodes.Status200OK,
@@ -205,32 +136,10 @@ namespace FA23_Convocation2023_API.Controllers
         }
 
         //get bachelor by hall name and session number
-        [HttpGet("GetByHallSession/{hallName}/{sessionNum}")]
-        public async Task<IActionResult> GetBachelorByHallSessionAsync([FromRoute] string hallName, [FromRoute] int sessionNum)
+        [HttpGet("GetByHallSession/{hallId}/{sessionId}")]
+        public async Task<IActionResult> GetBachelorByHallSessionAsync([FromRoute] int hallId, [FromRoute] int sessionId)
         {
-            var result = await _context.Bachelors
-                .Where(b => b.HallName == hallName && b.SessionNum == sessionNum)
-                .Select(b => new
-                {
-                    b.Id,
-                    b.StudentCode,
-                    b.FullName,
-                    b.Mail,
-                    b.Major,
-                    b.Image,
-                    b.Status,
-                    b.StatusBaChelor,
-                    b.CheckIn,
-                    b.HallName,
-                    b.SessionNum,
-                    b.Chair,
-                    b.ChairParent
-                }).ToListAsync();
-            if (result.Count == 0) return Ok(new
-            {
-                status = StatusCodes.Status204NoContent,
-                message = "Not any bachelors!"
-            });
+            var result = await _bachService.GetBachelorByHallSessionAsync(hallId, sessionId);
             return Ok(new
             {
                 status = StatusCodes.Status200OK,
