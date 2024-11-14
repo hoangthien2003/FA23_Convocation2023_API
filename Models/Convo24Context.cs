@@ -25,16 +25,19 @@ namespace FA23_Convocation2023_API.Models
         public virtual DbSet<Session> Sessions { get; set; }
         public virtual DbSet<User> Users { get; set; }
 
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
     => optionsBuilder.UseSqlServer("Data Source=db.fjourney.site;Initial Catalog=Convocation2023;User ID=sa;Password=<YourStrong@Passw0rda>;TrustServerCertificate=true;MultipleActiveResultSets=True");
-
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Bachelor>(entity =>
             {
                 entity.ToTable("Bachelor");
+
+                entity.HasIndex(e => e.HallId, "IX_Bachelor_HallId");
+
+                entity.HasIndex(e => e.SessionId, "IX_Bachelor_SessionId");
 
                 entity.Property(e => e.Chair)
                     .HasMaxLength(50)
@@ -92,6 +95,10 @@ namespace FA23_Convocation2023_API.Models
             {
                 entity.ToTable("CheckIn");
 
+                entity.HasIndex(e => e.HallId, "IX_CheckIn_HallId");
+
+                entity.HasIndex(e => e.SessionId, "IX_CheckIn_SessionId");
+
                 entity.Property(e => e.CheckinId).HasColumnName("CheckinID");
 
                 entity.HasOne(d => d.Hall)
@@ -108,8 +115,6 @@ namespace FA23_Convocation2023_API.Models
             modelBuilder.Entity<Hall>(entity =>
             {
                 entity.ToTable("Hall");
-
-                entity.Property(e => e.HallId).ValueGeneratedNever();
 
                 entity.Property(e => e.HallName)
                     .HasMaxLength(100)
@@ -132,13 +137,13 @@ namespace FA23_Convocation2023_API.Models
             {
                 entity.ToTable("Session");
 
-                entity.Property(e => e.SessionId).ValueGeneratedNever();
-
                 entity.Property(e => e.Session1).HasColumnName("Session");
             });
 
             modelBuilder.Entity<User>(entity =>
             {
+                entity.HasIndex(e => e.RoleId, "IX_Users_RoleID");
+
                 entity.Property(e => e.UserId)
                     .HasMaxLength(10)
                     .IsUnicode(false)

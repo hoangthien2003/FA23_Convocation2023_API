@@ -23,7 +23,7 @@ namespace FA23_Convocation2023_API.Controllers
         public async Task<IActionResult> CreateSessionAsync([FromBody]CreateSessionRequest sessionRequest)
         { 
             var sessionExist = _sessionService.SessionExist(sessionRequest.SessionNum);
-            if (sessionExist != null) {
+            if (sessionExist.Result) {
                 return BadRequest(new
                 {
                     status = StatusCodes.Status400BadRequest,
